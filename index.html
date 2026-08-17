@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سوق السودان — منتجات سودانية في الدمام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Almarai:wght@400;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --ink:#1B2430; --paper:#F7F5F0; --sand:#EDE6D8; --sand-2:#E1D7C1;
+    --gold:#B9852E; --gold-deep:#8F6620; --teal:#2F6E64; --teal-deep:#1F4B44;
+    --slate:#6B7280; --line:#DBD2BF; --white:#FFFFFF; --danger:#B4442E; --ok:#2F6E64;
+    --radius:14px; --shadow:0 10px 30px -12px rgba(27,36,48,.18); font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Almarai',sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:'El Messiri',serif;margin:0 0 .4em;font-weight:700;}
+  .num,.data{font-family:'IBM Plex Sans Arabic',sans-serif;}
+  p{margin:0 0 1em;color:#3B4452;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  img,svg{display:block;max-width:100%;}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  input,textarea,select{font-family:inherit;font-size:14px;color:var(--ink);}
+
+  header.site{position:sticky;top:0;z-index:60;background:rgba(247,245,240,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .header-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(155deg,var(--teal),var(--teal-deep));display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'El Messiri',serif;font-weight:700;font-size:18px;overflow:hidden;}
+  .brand-mark img{width:100%;height:100%;object-fit:cover;}
+  .brand-text h1{font-size:18px;margin:0;line-height:1;}
+  .brand-text span{font-size:11px;color:var(--slate);}
+  .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .btn{padding:11px 18px;border-radius:11px;font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;transition:.2s;}
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+  .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--gold);}
+  .btn-gold{background:var(--gold);color:#fff;}
+  .btn-gold:hover{background:var(--gold-deep);}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-sm{padding:8px 13px;font-size:12.5px;border-radius:8px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;}
+
+  .view{display:none;} .view.active{display:block;}
+  section{padding:36px 0;} .wrap-narrow{max-width:760px;margin:0 auto;padding:0 24px;}
+  .section-head{max-width:640px;margin-bottom:26px;}
+  .section-head .kicker{color:var(--gold-deep);font-weight:700;font-size:12px;letter-spacing:.4px;text-transform:uppercase;}
+  .section-head h3{font-size:clamp(22px,3vw,28px);}
+
+  .directory-tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+  .search-box{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:10px;padding:10px 14px;}
+  .search-box input{border:none;outline:none;background:transparent;width:100%;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{padding:8px 14px;border-radius:999px;background:var(--white);border:1px solid var(--line);font-size:13px;font-weight:700;color:#4A5261;}
+  .chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  .store-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media(max-width:920px){.store-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:620px){.store-grid{grid-template-columns:1fr;}}
+  .store-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  .store-cover{height:110px;background:linear-gradient(135deg,var(--sand),var(--sand-2));position:relative;overflow:hidden;}
+  .store-cover img{width:100%;height:100%;object-fit:cover;}
+  .store-cat{position:absolute;top:10px;left:10px;background:rgba(27,36,48,.82);color:#fff;font-size:11px;padding:5px 10px;border-radius:999px;}
+  .store-body{padding:16px;}
+  .store-body h4{font-size:15.5px;margin-bottom:6px;}
+  .store-meta{display:flex;gap:14px;font-size:12px;color:var(--slate);margin-bottom:8px;flex-wrap:wrap;}
+  .store-meta b{color:var(--ink);}
+
+  .panel-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(27,36,48,.45);opacity:0;pointer-events:none;transition:.25s;z-index:80;}
+  .panel-backdrop.show,.modal-backdrop.show{opacity:1;pointer-events:auto;}
+  .product-panel,.cart-drawer{position:fixed;top:0;bottom:0;left:0;width:min(420px,92vw);background:var(--paper);z-index:90;transform:translateX(-100%);transition:.3s;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+  .product-panel.show,.cart-drawer.show{transform:translateX(0);}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);}
+  .close-x{font-size:18px;color:var(--slate);}
+  .panel-body{padding:14px 20px;overflow-y:auto;flex:1;}
+  .product-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .product-thumb{width:52px;height:52px;border-radius:10px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex:none;}
+  .product-thumb img{width:100%;height:100%;object-fit:cover;}
+  .product-info{flex:1;} .product-info h5{margin:0;font-size:14px;} .product-info span{font-size:11.5px;color:var(--slate);}
+  .price-tag{font-weight:800;font-size:13.5px;white-space:nowrap;}
+  .add-btn{width:30px;height:30px;border-radius:8px;background:var(--ink);color:#fff;font-size:17px;flex:none;}
+
+  .cart-items{padding:14px 20px;overflow-y:auto;flex:1;}
+  .cart-empty{color:var(--slate);font-size:13.5px;padding:30px 0;text-align:center;}
+  .cart-line{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .cart-line>div:first-child{flex:1;}
+  .qty{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:2px 8px;}
+  .cart-summary{padding:16px 20px;border-top:1px solid var(--line);}
+  .sum-row{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;color:var(--slate);}
+  .sum-row.total{font-weight:800;color:var(--ink);font-size:15px;}
+
+  .modal-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);background:var(--white);border-radius:16px;padding:26px;width:min(440px,92vw);max-height:88vh;overflow-y:auto;box-shadow:var(--shadow);z-index:95;}
+  .modal-box.wide{width:min(720px,94vw);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:6px;color:#4A5261;}
+  .field input,.field textarea,.field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);outline:none;}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);}
+  .field-row{display:flex;gap:10px;} .field-row>.field{flex:1;}
+  .form-err{color:var(--danger);font-size:12.5px;margin:-6px 0 12px;min-height:1em;}
+  .form-note{font-size:12px;color:var(--slate);margin-top:-8px;margin-bottom:12px;}
+  .tabs-link{text-align:center;font-size:13px;color:var(--slate);margin-top:14px;}
+  .tabs-link b{color:var(--teal-deep);cursor:pointer;}
+
+  .tracker{display:flex;justify-content:space-between;margin:18px 0;position:relative;}
+  .t-step{flex:1;text-align:center;font-size:11px;color:var(--slate);position:relative;}
+  .t-dot{width:26px;height:26px;border-radius:50%;background:var(--sand);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:11px;font-weight:700;color:var(--slate);}
+  .t-step.done .t-dot{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .t-step.done{color:var(--ink);font-weight:700;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:10px;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:200;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .dash-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  @media(max-width:800px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;}
+  .stat-card .n{font-size:22px;font-weight:800;font-family:'El Messiri',serif;}
+  .stat-card .l{font-size:12px;color:var(--slate);}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px;}
+  .card h4{font-size:15.5px;margin-bottom:14px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:right;padding:10px 8px;color:var(--slate);font-size:11.5px;border-bottom:1px solid var(--line);}
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .empty-row td{text-align:center;color:var(--slate);padding:24px;}
+  .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+  .badge.new{background:#FCEFD8;color:var(--gold-deep);}
+  .badge.progress{background:#E4EFEC;color:var(--teal-deep);}
+  .badge.done{background:#E1F0E5;color:#256B3D;}
+  .mini-btn{background:var(--ink);color:#fff;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;}
+  .mini-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .switch{width:36px;height:20px;border-radius:999px;background:var(--sand-2);position:relative;display:inline-block;cursor:pointer;}
+  .switch::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;}
+  .switch.on{background:var(--teal);} .switch.on::after{right:18px;}
+  .price-input{width:90px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;}
+
+  .role-tabs{display:flex;gap:6px;background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:4px;width:fit-content;margin-bottom:22px;}
+  .role-tabs button{padding:9px 18px;border-radius:999px;font-size:13px;font-weight:700;color:#5B6270;}
+  .role-tabs button.active{background:var(--ink);color:var(--paper);}
+
+  .img-upload{display:flex;align-items:center;gap:12px;}
+  .img-preview{width:64px;height:64px;border-radius:10px;background:var(--sand);border:1px solid var(--line);object-fit:cover;flex:none;}
+  .upload-btn{background:var(--sand);border:1px dashed var(--line);border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:700;}
+
+  #mapPicker{width:100%;height:320px;border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+  .map-coords{font-size:12px;color:var(--slate);margin-top:8px;}
+  .link-gmaps{color:var(--teal-deep);font-weight:700;font-size:12.5px;text-decoration:underline;}
+
+  .empty-state{text-align:center;padding:70px 20px;color:var(--slate);}
+  .center-box{max-width:420px;margin:60px auto;}
+  footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:40px;text-align:center;color:var(--slate);font-size:12.5px;}
+  .loading-dim{opacity:.5;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap header-row">
+    <div class="brand" data-go="home">
+      <div class="brand-mark" id="brandMark">س</div>
+      <div class="brand-text"><h1 id="siteName">سوق السودان</h1><span>منتجات سودانية أصيلة في الدمام</span></div>
+    </div>
+    <div class="header-actions" id="headerActions"></div>
+  </div>
+</header>
+
+<!-- ===================== HOME (customer / guest) ===================== -->
+<div class="view active" id="view-home">
+  <section class="wrap">
+    <div class="directory-tools">
+      <div class="search-box">🔎<input id="storeSearch" placeholder="ابحث عن متجر أو منتج..."></div>
+      <div class="chips" id="catChips"></div>
+      <button class="btn btn-ghost btn-sm" id="trackOrderBtn">تتبع طلب</button>
+    </div>
+    <div class="store-grid" id="storeGrid"></div>
+  </section>
+</div>
+
+<!-- ===================== MERCHANT ===================== -->
+<div class="view" id="view-merchant">
+  <section class="wrap">
+    <div class="dash-head"><div><span class="section-head kicker">لوحة التاجر</span><h3 id="merchStoreTitle">متجري</h3></div></div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="n num" id="mStatProducts">٠</div><div class="l">المنتجات</div></div>
+      <div class="stat-card"><div class="n num" id="mStatOrders">٠</div><div class="l">الطلبات</div></div>
+      <div class="stat-card"><div class="n num" id="mStatSales">٠ ر.س</div><div class="l">إجمالي المبيعات</div></div>
+      <div class="stat-card"><div class="n num" id="mStatCommission">٠ ر.س</div><div class="l">عمولة المنصة (١٪)</div></div>
+    </div>
+
+    <div class="card">
+      <h4>بيانات المتجر</h4>
+      <div class="img-upload" style="margin-bottom:16px;">
+        <img class="img-preview" id="storeLogoPreview" src="" alt="">
+        <div>
+          <label class="upload-btn">تغيير الشعار<input type="file" accept="image/*" id="storeLogoInput" style="display:none;"></label>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>اسم المتجر</label><input id="sfName"></div>
+        <div class="field"><label>التصنيف</label><input id="sfCategory" placeholder="أطعمة / بهارات / ملابس..."></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>الحي</label><input id="sfArea"></div>
+        <div class="field"><label>رقم التواصل الأساسي</label><input id="sfPhone" placeholder="05xxxxxxxx"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>رقم تواصل إضافي (اختياري)</label><input id="sfPhone2"></div>
+        <div class="field"><label>العنوان النصي</label><input id="sfAddress"></div>
+      </div>
+      <div class="field"><label>وصف المتجر</label><textarea id="sfDesc" rows="2"></textarea></div>
+      <div class="field">
+        <label>موقع المتجر على الخريطة</label>
+        <button class="btn btn-ghost btn-sm" type="button" id="sfPickLocation">📍 تحديد الموقع على الخريطة</button>
+        <div class="map-coords" id="sfLocDisplay">لم يتم تحديد الموقع بعد</div>
+      </div>
+      <button class="btn btn-primary" id="saveStoreBtn">حفظ بيانات المتجر</button>
+    </div>
+
+    <div class="card">
+      <h4>المنتجات</h4>
+      <button class="btn btn-gold btn-sm" id="addProductBtn" style="margin-bottom:14px;">+ إضافة منتج</button>
+      <table><thead><tr><th>المنتج</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody id="merchantProductsBody"></tbody></table>
+    </div>
+
+    <div class="card">
+      <h4>الطلبات</h4>
+      <table><thead><tr><th>رقم الطلب</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th></tr></thead><tbody id="merchantOrdersBody"></tbody></table>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== COURIER ===================== -->
+<div class="view" id="view-courier">
+  <section class="wrap">
+    <div class="dash-head"><div><span class="section-head kicker">لوحة المندوب</span><h3>طلباتي</h3></div></div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="n num" id="dStatAvailable">٠</div><div class="l">طلبات متاحة</div></div>
+      <div class="stat-card"><div class="n num" id="dStatActive">٠</div><div class="l">طلبات نشطة</div></div>
+      <div class="stat-card"><div class="n num" id="dStatDone">٠</div><div class="l">تم تسليمها</div></div>
+      <div class="stat-card"><div class="n num" id="dStatEarnings">٠ ر.س</div><div class="l">الأرباح</div></div>
+    </div>
+    <div class="card">
+      <h4>طلبات متاحة</h4>
+      <table><thead><tr><th>رقم الطلب</th><th>المتجر</th><th>العنوان</th><th>الموقع</th><th>أجرة التوصيل</th><th></th></tr></thead><tbody id="availableOrdersBody"></tbody></table>
+    </div>
+    <div class="card">
+      <h4>طلباتي الحالية</h4>
+      <table><thead><tr><th>رقم الطلب</th><th>الحالة</th><th></th></tr></thead><tbody id="myOrdersBody"></tbody></table>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== ADMIN ===================== -->
+<div class="view" id="view-admin">
+  <section class="wrap">
+    <div class="dash-head"><div><span class="section-head kicker">لوحة الإدارة</span><h3>نظرة عامة</h3></div></div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="n num" id="aStatOrders">٠</div><div class="l">إجمالي الطلبات</div></div>
+      <div class="stat-card"><div class="n num" id="aStatStores">٠</div><div class="l">المتاجر</div></div>
+      <div class="stat-card"><div class="n num" id="aStatCouriers">٠</div><div class="l">المندوبون</div></div>
+      <div class="stat-card"><div class="n num" id="aStatRevenue">٠ ر.س</div><div class="l">إيراد المنصة (تقديري)</div></div>
+    </div>
+
+    <div class="role-tabs" id="adminTabs">
+      <button class="active" data-tab="users">المستخدمون</button>
+      <button data-tab="stores">المتاجر</button>
+      <button data-tab="orders">الطلبات</button>
+      <button data-tab="settings">إعدادات الموقع</button>
+    </div>
+
+    <div id="adminTab-users">
+      <div class="card">
+        <div class="dash-head"><h4 style="margin:0;">حسابات المستخدمين (تاجر / مندوب / إدارة)</h4>
+          <button class="btn btn-gold btn-sm" id="openCreateUser">+ إنشاء حساب جديد</button>
+        </div>
+        <table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الدور</th><th>الهاتف</th><th></th></tr></thead><tbody id="adminUsersBody"></tbody></table>
+      </div>
+    </div>
+
+    <div id="adminTab-stores" style="display:none;">
+      <div class="card">
+        <h4>المتاجر</h4>
+        <table><thead><tr><th>المتجر</th><th>التاجر</th><th>المبيعات</th><th>العمولة</th><th>الحالة</th></tr></thead><tbody id="adminStoresBody"></tbody></table>
+      </div>
+    </div>
+
+    <div id="adminTab-orders" style="display:none;">
+      <div class="card">
+        <h4>كل الطلبات</h4>
+        <table><thead><tr><th>رقم الطلب</th><th>المتجر</th><th>الإجمالي</th><th>المسار</th></tr></thead><tbody id="adminOrdersBody"></tbody></table>
+      </div>
+    </div>
+
+    <div id="adminTab-settings" style="display:none;">
+      <div class="card" style="max-width:480px;">
+        <h4>شعار المنصة واسمها</h4>
+        <div class="img-upload" style="margin-bottom:16px;">
+          <img class="img-preview" id="siteLogoPreview" src="" alt="">
+          <label class="upload-btn">تغيير الشعار<input type="file" accept="image/*" id="siteLogoInput" style="display:none;"></label>
+        </div>
+        <div class="field"><label>اسم المنصة</label><input id="siteNameInput"></div>
+        <button class="btn btn-primary" id="saveSiteSettings">حفظ</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== BOOTSTRAP (first admin) ===================== -->
+<div class="view" id="view-bootstrap">
+  <section class="wrap-narrow center-box">
+    <div class="card">
+      <span class="section-head kicker">إعداد أولي</span>
+      <h3>إنشاء أول حساب مدير للمنصة</h3>
+      <p style="font-size:13.5px;">لا يوجد حتى الآن أي حساب إدارة على هذه المنصة. أنشئ الحساب الأول لتتمكن من إدارة التجار والمندوبين.</p>
+      <div class="field"><label>الاسم الكامل</label><input id="bsFullName"></div>
+      <div class="field"><label>اسم المستخدم</label><input id="bsUsername"></div>
+      <div class="field"><label>كلمة المرور</label><input id="bsPassword" type="password"></div>
+      <div class="form-err" id="bsErr"></div>
+      <button class="btn btn-primary" id="bsSubmit" style="width:100%;justify-content:center;">إنشاء الحساب وتسجيل الدخول</button>
+    </div>
+  </section>
+</div>
+
+<!-- Product panel -->
+<div class="panel-backdrop" id="panelBackdrop"></div>
+<aside class="product-panel" id="productPanel">
+  <div class="panel-head"><h3 id="panelStoreName">اسم المتجر</h3><button class="close-x" id="closePanel">✕</button></div>
+  <div class="panel-body" id="panelProducts"></div>
+</aside>
+
+<!-- Cart drawer -->
+<div class="panel-backdrop" id="cartBackdrop"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="panel-head"><h3>سلتك</h3><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>المنتجات</span><span class="num" id="sumProducts">٠ ر.س</span></div>
+    <div class="sum-row"><span>التوصيل</span><span class="num" id="sumDelivery">١٠ ر.س</span></div>
+    <div class="sum-row total"><span>الإجمالي</span><span class="num" id="sumTotal">٠ ر.س</span></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkoutBtn">إتمام الطلب</button>
+  </div>
+</aside>
+
+<!-- Checkout modal -->
+<div class="modal-backdrop" id="checkoutBackdrop">
+  <div class="modal-box">
+    <h3>بيانات التوصيل</h3>
+    <p style="font-size:13px;">الدفع نقدًا عند الاستلام.</p>
+    <div class="field"><label>الاسم</label><input id="cfName"></div>
+    <div class="field"><label>رقم الهاتف</label><input id="cfPhone" placeholder="05xxxxxxxx"></div>
+    <div class="field"><label>العنوان</label><input id="cfAddress" placeholder="الحي، الشارع، رقم المبنى — الدمام"></div>
+    <div class="field">
+      <button class="btn btn-ghost btn-sm" type="button" id="cfPickLocation">📍 تحديد الموقع على الخريطة</button>
+      <div class="map-coords" id="cfLocDisplay">لم يتم تحديد الموقع بعد (اختياري لكن يسهّل الوصول)</div>
+    </div>
+    <div class="field"><label>ملاحظة (اختياري)</label><textarea id="cfNote" rows="2"></textarea></div>
+    <div class="form-err" id="cfErr"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" id="cancelCheckout" style="flex:1;justify-content:center;">إلغاء</button>
+      <button class="btn btn-primary" id="confirmCheckout" style="flex:1;justify-content:center;">تأكيد الطلب</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation modal -->
+<div class="modal-backdrop" id="confirmBackdrop">
+  <div class="modal-box">
+    <h3>تم استلام طلبك ✅</h3>
+    <p style="font-size:13.5px;">رقم الطلب <b class="num" id="confOrderId"></b>. احتفظ برقم الطلب ورقم هاتفك لتتبع الحالة لاحقًا.</p>
+    <div class="tracker" id="trackerBox">
+      <div class="t-step done"><div class="t-dot">١</div><span>طلب جديد</span></div>
+      <div class="t-step"><div class="t-dot">٢</div><span>قبول المندوب</span></div>
+      <div class="t-step"><div class="t-dot">٣</div><span>استلام من المتجر</span></div>
+      <div class="t-step"><div class="t-dot">٤</div><span>في الطريق</span></div>
+      <div class="t-step"><div class="t-dot">٥</div><span>تم التسليم</span></div>
+    </div>
+    <button class="btn btn-primary" id="closeConfirm" style="width:100%;justify-content:center;">تم</button>
+  </div>
+</div>
+
+<!-- Track order modal -->
+<div class="modal-backdrop" id="trackBackdrop">
+  <div class="modal-box">
+    <h3>تتبع طلب</h3>
+    <div class="field"><label>رقم الطلب</label><input id="tkCode" placeholder="SD-1000"></div>
+    <div class="field"><label>رقم الهاتف المستخدم في الطلب</label><input id="tkPhone"></div>
+    <div class="form-err" id="tkErr"></div>
+    <button class="btn btn-primary" id="tkSubmit" style="width:100%;justify-content:center;margin-bottom:10px;">بحث</button>
+    <div id="tkResult"></div>
+  </div>
+</div>
+
+<!-- Login modal -->
+<div class="modal-backdrop" id="loginBackdrop">
+  <div class="modal-box">
+    <h3>تسجيل الدخول</h3>
+    <div class="field"><label>اسم المستخدم</label><input id="liUsername"></div>
+    <div class="field"><label>كلمة المرور</label><input id="liPassword" type="password"></div>
+    <div class="form-err" id="liErr"></div>
+    <button class="btn btn-primary" id="liSubmit" style="width:100%;justify-content:center;">دخول</button>
+    <div class="tabs-link">ليس لديك حساب؟ <b id="goRegister">سجّل كعميل</b></div>
+  </div>
+</div>
+
+<!-- Register (customer) modal -->
+<div class="modal-backdrop" id="registerBackdrop">
+  <div class="modal-box">
+    <h3>إنشاء حساب عميل</h3>
+    <div class="field"><label>الاسم الكامل</label><input id="reFullName"></div>
+    <div class="field"><label>اسم المستخدم</label><input id="reUsername"></div>
+    <div class="field"><label>رقم الهاتف</label><input id="rePhone"></div>
+    <div class="field"><label>كلمة المرور</label><input id="rePassword" type="password"></div>
+    <div class="form-err" id="reErr"></div>
+    <button class="btn btn-primary" id="reSubmit" style="width:100%;justify-content:center;">إنشاء الحساب</button>
+    <div class="tabs-link">لديك حساب؟ <b id="goLogin">سجّل الدخول</b></div>
+  </div>
+</div>
+
+<!-- Map picker modal -->
+<div class="modal-backdrop" id="mapBackdrop">
+  <div class="modal-box wide">
+    <h3>حدد الموقع على الخريطة</h3>
+    <p style="font-size:12.5px;">انقر على الخريطة لوضع علامة الموقع، ثم اضغط تأكيد.</p>
+    <div id="mapPicker"></div>
+    <div class="map-coords" id="mapCoordsDisplay">لم يتم تحديد نقطة بعد</div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="btn btn-ghost" id="mapCancel" style="flex:1;justify-content:center;">إلغاء</button>
+      <button class="btn btn-primary" id="mapConfirm" style="flex:1;justify-content:center;">تأكيد الموقع</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product edit modal -->
+<div class="modal-backdrop" id="productBackdrop">
+  <div class="modal-box">
+    <h3 id="productModalTitle">إضافة منتج</h3>
+    <div class="img-upload" style="margin-bottom:16px;">
+      <img class="img-preview" id="prodImgPreview" src="" alt="">
+      <label class="upload-btn">اختيار صورة<input type="file" accept="image/*" id="prodImgInput" style="display:none;"></label>
+    </div>
+    <div class="field"><label>اسم المنتج</label><input id="prName"></div>
+    <div class="field"><label>الوصف</label><textarea id="prDesc" rows="2"></textarea></div>
+    <div class="field"><label>السعر (ر.س)</label><input id="prPrice" type="number" min="0" step="0.5"></div>
+    <div class="form-err" id="prErr"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" id="prCancel" style="flex:1;justify-content:center;">إلغاء</button>
+      <button class="btn btn-primary" id="prSave" style="flex:1;justify-content:center;">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create user (admin) modal -->
+<div class="modal-backdrop" id="userBackdrop">
+  <div class="modal-box">
+    <h3>إنشاء حساب مستخدم</h3>
+    <div class="field"><label>الدور</label>
+      <select id="uRole"><option value="merchant">تاجر</option><option value="courier">مندوب توصيل</option><option value="admin">إدارة</option></select>
+    </div>
+    <div class="field"><label>الاسم الكامل</label><input id="uFullName"></div>
+    <div class="field"><label>اسم المستخدم</label><input id="uUsername"></div>
+    <div class="field"><label>رقم الهاتف (اختياري)</label><input id="uPhone"></div>
+    <div class="field"><label>كلمة المرور</label><input id="uPassword" type="password"></div>
+    <div class="form-err" id="uErr"></div>
+    <button class="btn btn-primary" id="uSubmit" style="width:100%;justify-content:center;">إنشاء الحساب</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="site"><div class="wrap">© 2026 سوق السودان — الدمام، المملكة العربية السعودية</div></footer>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ============== SUPABASE CONFIG ============== */
+const SUPABASE_URL = "https://vrmcfnmtowwzgvthrbgv.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZybWNmbm10b3d3emd2dGhyYmd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NTQ3NjIsImV4cCI6MjEwMjUzMDc2Mn0.RfnmORVG66KSwt_szEqjG-hwPzF_UEmWlHGdvsaZMW0";
+const FUNCTIONS_URL = SUPABASE_URL + "/functions/v1";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function callFunction(name, body, useAuth){
+  const headers = {"Content-Type":"application/json", "apikey": SUPABASE_ANON_KEY};
+  headers["Authorization"] = useAuth && state.session ? `Bearer ${state.session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`;
+  const res = await fetch(`${FUNCTIONS_URL}/${name}`, { method:"POST", headers, body: JSON.stringify(body) });
+  let data;
+  try{ data = await res.json(); }catch(e){ data = {error:"استجابة غير صالحة من الخادم"}; }
+  if(!res.ok) throw new Error(data.error || "فشل الطلب");
+  return data;
+}
+
+const DAMMAM = [26.4207, 50.0888];
+const DELIVERY_FEE = 10;
+const STAGES = ["طلب جديد","قبول المندوب","استلام من المتجر","في الطريق","تم التسليم"];
+
+function emailFor(username){ return username.trim().toLowerCase() + "@sudan-market.local"; }
+function sar(n){ return (Number(n)||0).toLocaleString("ar-SA") + " ر.س"; }
+function esc(s){ return (s||"").toString().replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+const toastEl = document.getElementById("toast");
+let toastTimer;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toastEl.classList.remove("show"), 2400);
+}
+
+/* ============== STATE ============== */
+const state = {
+  session: null,
+  profile: null,          // {id, role, username, full_name, phone}
+  stores: [],
+  myStore: null,          // merchant's own store row
+  cart: {},                // productId -> {product, storeId, storeName, qty}
+  activeCat: "الكل",
+  hasAnyAdmin: true,
+  mapTarget: null,         // 'checkout' | 'store'
+  mapMarker: null, mapLeaflet: null,
+  editingProductId: null,
+};
+
+/* ============== VIEW SWITCH ============== */
+function switchView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active", v.id==="view-"+name));
+  window.scrollTo({top:0, behavior:"smooth"});
+  if(name==="home") loadStores();
+  if(name==="merchant") loadMerchant();
+  if(name==="courier") loadCourier();
+  if(name==="admin") loadAdmin();
+}
+
+/* ============== HEADER / AUTH STATE ============== */
+function renderHeader(){
+  const el = document.getElementById("headerActions");
+  const p = state.profile;
+  if(!p){
+    el.innerHTML = `
+      <button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>
+      <button class="btn btn-ghost btn-sm" id="hRegister">إنشاء حساب</button>
+      <button class="btn btn-primary btn-sm" id="hLogin">تسجيل الدخول</button>`;
+    document.getElementById("hCart").onclick = openCart;
+    document.getElementById("hRegister").onclick = ()=>openModal("registerBackdrop");
+    document.getElementById("hLogin").onclick = ()=>openModal("loginBackdrop");
+  } else {
+    let dashBtn = "";
+    if(p.role==="merchant") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="merchant">لوحة التاجر</button>`;
+    if(p.role==="courier") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="courier">لوحة المندوب</button>`;
+    if(p.role==="admin") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="admin">لوحة الإدارة</button>`;
+    let cartBtn = p.role==="customer" ? `<button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>` : "";
+    let homeBtn = p.role!=="customer" ? `<button class="btn btn-ghost btn-sm" data-go="home">تصفح المتاجر</button>` : "";
+    el.innerHTML = `${homeBtn}${cartBtn}${dashBtn}
+      <span class="pill">👋 ${esc(p.full_name)}</span>
+      <button class="btn btn-ghost btn-sm" id="hLogout">خروج</button>`;
+    if(document.getElementById("hCart")) document.getElementById("hCart").onclick = openCart;
+    document.getElementById("hLogout").onclick = doLogout;
+    el.querySelectorAll("[data-go]").forEach(b=> b.onclick = ()=>switchView(b.dataset.go));
+  }
+  document.querySelectorAll(".brand[data-go]").forEach(b=> b.onclick = ()=>switchView("home"));
+  updateCartCount();
+}
+
+async function refreshAuth(){
+  const {data:{session}} = await sb.auth.getSession();
+  state.session = session;
+  if(session){
+    const {data:profile} = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+    state.profile = profile || null;
+  } else {
+    state.profile = null;
+  }
+  renderHeader();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  state.profile = null;
+  renderHeader();
+  switchView("home");
+}
+
+sb.auth.onAuthStateChange((_evt, _session)=>{ /* handled explicitly after actions to control flow */ });
+
+/* ============== MODALS ============== */
+function openModal(id){ document.getElementById(id).classList.add("show"); }
+function closeModal(id){ document.getElementById(id).classList.remove("show"); }
+document.querySelectorAll(".modal-backdrop").forEach(m=>{
+  m.addEventListener("click", (e)=>{ if(e.target===m) m.classList.remove("show"); });
+});
+
+document.getElementById("goRegister").onclick = ()=>{ closeModal("loginBackdrop"); openModal("registerBackdrop"); };
+document.getElementById("goLogin").onclick = ()=>{ closeModal("registerBackdrop"); openModal("loginBackdrop"); };
+
+/* ============== LOGIN ============== */
+document.getElementById("liSubmit").onclick = async ()=>{
+  const username = document.getElementById("liUsername").value.trim();
+  const password = document.getElementById("liPassword").value;
+  const errEl = document.getElementById("liErr");
+  errEl.textContent = "";
+  if(!username || !password){ errEl.textContent = "أدخل اسم المستخدم وكلمة المرور"; return; }
+  const {error} = await sb.auth.signInWithPassword({ email: emailFor(username), password });
+  if(error){ errEl.textContent = "بيانات الدخول غير صحيحة"; return; }
+  await refreshAuth();
+  closeModal("loginBackdrop");
+  document.getElementById("liUsername").value=""; document.getElementById("liPassword").value="";
+  toast("تم تسجيل الدخول بنجاح");
+  if(state.profile){
+    if(state.profile.role==="merchant") switchView("merchant");
+    else if(state.profile.role==="courier") switchView("courier");
+    else if(state.profile.role==="admin") switchView("admin");
+    else switchView("home");
+  }
+};
+
+/* ============== CUSTOMER REGISTER ============== */
+document.getElementById("reSubmit").onclick = async ()=>{
+  const full_name = document.getElementById("reFullName").value.trim();
+  const username = document.getElementById("reUsername").value.trim();
+  const phone = document.getElementById("rePhone").value.trim();
+  const password = document.getElementById("rePassword").value;
+  const errEl = document.getElementById("reErr");
+  errEl.textContent = "";
+  if(!full_name || !username || !password){ errEl.textContent = "يرجى تعبئة كل الحقول المطلوبة"; return; }
+  if(password.length < 6){ errEl.textContent = "كلمة المرور يجب أن تكون 6 أحرف على الأقل"; return; }
+  try{
+    await callFunction("customer-register", {username, password, full_name, phone}, false);
+    const {error} = await sb.auth.signInWithPassword({ email: emailFor(username), password });
+    if(error){ errEl.textContent = "تم إنشاء الحساب، يرجى تسجيل الدخول"; closeModal("registerBackdrop"); openModal("loginBackdrop"); return; }
+    await refreshAuth();
+    closeModal("registerBackdrop");
+    ["reFullName","reUsername","rePhone","rePassword"].forEach(id=>document.getElementById(id).value="");
+    toast("تم إنشاء الحساب بنجاح، أهلًا بك 🎉");
+    switchView("home");
+  }catch(e){ errEl.textContent = e.message || "خطأ في الاتصال، حاول مرة أخرى"; }
+};
+
+/* ============== BOOTSTRAP FIRST ADMIN ============== */
+async function checkBootstrap(){
+  const {count} = await sb.from("profiles").select("id", {count:"exact", head:true}).eq("role","admin");
+  state.hasAnyAdmin = !!count && count > 0;
+}
+document.getElementById("bsSubmit").onclick = async ()=>{
+  const full_name = document.getElementById("bsFullName").value.trim();
+  const username = document.getElementById("bsUsername").value.trim();
+  const password = document.getElementById("bsPassword").value;
+  const errEl = document.getElementById("bsErr");
+  errEl.textContent = "";
+  if(!full_name || !username || password.length<6){ errEl.textContent = "يرجى تعبئة كل الحقول (كلمة مرور 6 أحرف على الأقل)"; return; }
+  try{
+    await callFunction("admin-users", {action:"create", role:"admin", username, password, full_name}, false);
+    const {error} = await sb.auth.signInWithPassword({ email: emailFor(username), password });
+    if(error){ errEl.textContent = error.message; return; }
+    await refreshAuth();
+    state.hasAnyAdmin = true;
+    toast("تم إنشاء حساب المدير بنجاح");
+    switchView("admin");
+  }catch(e){ errEl.textContent = e.message || "خطأ في الاتصال"; }
+};
+
+/* ============== MAP PICKER (Leaflet + OpenStreetMap, no API key needed) ============== */
+function ensureMap(lat, lng){
+  const el = document.getElementById("mapPicker");
+  if(!state.mapLeaflet){
+    state.mapLeaflet = L.map(el).setView([lat||DAMMAM[0], lng||DAMMAM[1]], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(state.mapLeaflet);
+    state.mapLeaflet.on("click", (e)=> placeMarker(e.latlng.lat, e.latlng.lng));
+  } else {
+    setTimeout(()=> state.mapLeaflet.invalidateSize(), 50);
+    state.mapLeaflet.setView([lat||DAMMAM[0], lng||DAMMAM[1]], 13);
+  }
+  if(lat && lng) placeMarker(lat, lng);
+}
+function placeMarker(lat, lng){
+  if(state.mapMarker) state.mapLeaflet.removeLayer(state.mapMarker);
+  state.mapMarker = L.marker([lat,lng]).addTo(state.mapLeaflet);
+  state.mapMarker._latlng2 = {lat,lng};
+  document.getElementById("mapCoordsDisplay").innerHTML =
+    `تم تحديد: ${lat.toFixed(5)}, ${lng.toFixed(5)} — <a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">فتح في خرائط قوقل ↗</a>`;
+}
+function openMapPicker(target, lat, lng){
+  state.mapTarget = target;
+  openModal("mapBackdrop");
+  setTimeout(()=> ensureMap(lat, lng), 60);
+}
+document.getElementById("mapCancel").onclick = ()=> closeModal("mapBackdrop");
+document.getElementById("mapConfirm").onclick = ()=>{
+  if(!state.mapMarker){ toast("انقر على الخريطة أولًا لتحديد نقطة"); return; }
+  const {lat,lng} = state.mapMarker._latlng2;
+  if(state.mapTarget==="checkout"){
+    state.checkoutLoc = {lat,lng};
+    document.getElementById("cfLocDisplay").innerHTML =
+      `📍 تم تحديد الموقع — <a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">عرض في خرائط قوقل ↗</a>`;
+  } else if(state.mapTarget==="store"){
+    state.storeLoc = {lat,lng};
+    document.getElementById("sfLocDisplay").innerHTML =
+      `📍 تم تحديد الموقع — <a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">عرض في خرائط قوقل ↗</a>`;
+  }
+  closeModal("mapBackdrop");
+};
+document.getElementById("cfPickLocation").onclick = ()=> openMapPicker("checkout", state.checkoutLoc?.lat, state.checkoutLoc?.lng);
+document.getElementById("sfPickLocation").onclick = ()=> openMapPicker("store", state.storeLoc?.lat, state.storeLoc?.lng);
+
+/* ============== STORE DIRECTORY (home) ============== */
+async function loadStores(){
+  const {data, error} = await sb.from("stores").select("*, products(id, name, price, image_url, active)").eq("active", true).order("created_at");
+  if(error){ console.error(error); return; }
+  state.stores = data || [];
+  renderCatChips();
+  renderStores();
+}
+function renderCatChips(){
+  const cats = ["الكل", ...Array.from(new Set(state.stores.map(s=>s.category)))];
+  const box = document.getElementById("catChips");
+  box.innerHTML = "";
+  cats.forEach(c=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (c===state.activeCat ? " active":"");
+    b.textContent = c;
+    b.onclick = ()=>{ state.activeCat = c; renderCatChips(); renderStores(); };
+    box.appendChild(b);
+  });
+}
+function renderStores(){
+  const q = document.getElementById("storeSearch").value.trim();
+  const grid = document.getElementById("storeGrid");
+  const filtered = state.stores.filter(s=>{
+    const matchCat = state.activeCat==="الكل" || s.category===state.activeCat;
+    const prods = (s.products||[]).filter(p=>p.active);
+    const matchQ = !q || s.name.includes(q) || prods.some(p=>p.name.includes(q));
+    return matchCat && matchQ;
+  });
+  if(filtered.length===0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">لا توجد نتائج مطابقة.</div>`;
+    return;
+  }
+  grid.innerHTML = "";
+  filtered.forEach(s=>{
+    const activeProducts = (s.products||[]).filter(p=>p.active);
+    const card = document.createElement("div");
+    card.className = "store-card";
+    card.innerHTML = `
+      <div class="store-cover">${s.logo_url ? `<img src="${esc(s.logo_url)}">` : ""}<span class="store-cat">${esc(s.category)}</span></div>
+      <div class="store-body">
+        <h4>${esc(s.name)}</h4>
+        <div class="store-meta">${s.area?`<span>📍 ${esc(s.area)}</span>`:""}${s.lat?`<a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${s.lat},${s.lng}">الموقع على الخريطة ↗</a>`:""}</div>
+        <p>${activeProducts.length} منتجات متاحة الآن</p>
+        <button class="btn btn-gold btn-sm" data-open-store="${s.id}">تصفح المنتجات</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll("[data-open-store]").forEach(b=> b.onclick = ()=> openStorePanel(b.dataset.openStore));
+}
+document.getElementById("storeSearch").addEventListener("input", renderStores);
+document.getElementById("trackOrderBtn").onclick = ()=>{ document.getElementById("tkResult").innerHTML=""; openModal("trackBackdrop"); };
+
+/* ============== PRODUCT PANEL ============== */
+const productPanel = document.getElementById("productPanel");
+const panelBackdrop = document.getElementById("panelBackdrop");
+function openStorePanel(storeId){
+  const store = state.stores.find(s=>s.id===storeId);
+  document.getElementById("panelStoreName").textContent = store.name;
+  const box = document.getElementById("panelProducts");
+  box.innerHTML = "";
+  const activeProducts = (store.products||[]).filter(p=>p.active);
+  if(activeProducts.length===0) box.innerHTML = `<div class="empty-state">لا توجد منتجات متاحة حاليًا.</div>`;
+  activeProducts.forEach(p=>{
+    const row = document.createElement("div");
+    row.className = "product-row";
+    row.innerHTML = `
+      <div class="product-thumb">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>
+      <div class="product-info"><h5>${esc(p.name)}</h5><span>${esc(store.name)}</span></div>
+      <div class="price-tag num">${sar(p.price)}</div>
+      <button class="add-btn" title="أضف للسلة">+</button>`;
+    row.querySelector(".add-btn").onclick = ()=> addToCart(p, store);
+    box.appendChild(row);
+  });
+  productPanel.classList.add("show"); panelBackdrop.classList.add("show");
+}
+function closeStorePanel(){ productPanel.classList.remove("show"); panelBackdrop.classList.remove("show"); }
+document.getElementById("closePanel").onclick = closeStorePanel;
+panelBackdrop.addEventListener("click", closeStorePanel);
+
+/* ============== CART ============== */
+const cartDrawer = document.getElementById("cartDrawer");
+const cartBackdrop = document.getElementById("cartBackdrop");
+function addToCart(product, store){
+  if(!state.cart[product.id]) state.cart[product.id] = {product, storeId:store.id, storeName:store.name, qty:0};
+  state.cart[product.id].qty++;
+  renderCart();
+  toast(`أُضيف «${product.name}» إلى السلة`);
+}
+function changeQty(pid, delta){
+  if(!state.cart[pid]) return;
+  state.cart[pid].qty += delta;
+  if(state.cart[pid].qty<=0) delete state.cart[pid];
+  renderCart();
+}
+function updateCartCount(){
+  const el = document.getElementById("cartCount");
+  if(!el) return;
+  const total = Object.values(state.cart).reduce((a,e)=>a+e.qty,0);
+  el.textContent = total.toLocaleString("ar-SA");
+}
+function renderCart(){
+  const entries = Object.values(state.cart);
+  updateCartCount();
+  const box = document.getElementById("cartItems");
+  box.innerHTML = "";
+  if(entries.length===0){
+    box.innerHTML = '<div class="cart-empty">سلتك فارغة — أضف منتجات من أي متجر.</div>';
+  } else {
+    entries.forEach(e=>{
+      const line = document.createElement("div");
+      line.className = "cart-line";
+      line.innerHTML = `
+        <div><div style="font-weight:700;font-size:13.5px;">${esc(e.product.name)}</div><div style="font-size:11.5px;color:var(--slate);">${esc(e.storeName)}</div></div>
+        <div class="qty"><button data-dec="${e.product.id}">−</button><span class="num">${e.qty}</span><button data-inc="${e.product.id}">+</button></div>
+        <div class="num" style="font-weight:800;">${sar(e.product.price*e.qty)}</div>`;
+      box.appendChild(line);
+    });
+    box.querySelectorAll("[data-inc]").forEach(b=> b.onclick = ()=>changeQty(b.dataset.inc,1));
+    box.querySelectorAll("[data-dec]").forEach(b=> b.onclick = ()=>changeQty(b.dataset.dec,-1));
+  }
+  const subtotal = entries.reduce((a,e)=>a+e.product.price*e.qty,0);
+  const delivery = entries.length? DELIVERY_FEE : 0;
+  document.getElementById("sumProducts").textContent = sar(subtotal);
+  document.getElementById("sumDelivery").textContent = sar(delivery);
+  document.getElementById("sumTotal").textContent = sar(subtotal+delivery);
+}
+function openCart(){ cartDrawer.classList.add("show"); cartBackdrop.classList.add("show"); }
+function closeCartFn(){ cartDrawer.classList.remove("show"); cartBackdrop.classList.remove("show"); }
+document.getElementById("closeCart").onclick = closeCartFn;
+cartBackdrop.addEventListener("click", closeCartFn);
+
+/* ============== CHECKOUT ============== */
+const checkoutBackdrop = document.getElementById("checkoutBackdrop");
+document.getElementById("checkoutBtn").onclick = ()=>{
+  if(Object.keys(state.cart).length===0){ toast("السلة فارغة"); return; }
+  closeCartFn();
+  if(state.profile && state.profile.role==="customer"){
+    document.getElementById("cfName").value = state.profile.full_name || "";
+    document.getElementById("cfPhone").value = state.profile.phone || "";
+  }
+  openModal("checkoutBackdrop");
+};
+document.getElementById("cancelCheckout").onclick = ()=> closeModal("checkoutBackdrop");
+
+document.getElementById("confirmCheckout").onclick = async ()=>{
+  const name = document.getElementById("cfName").value.trim();
+  const phone = document.getElementById("cfPhone").value.trim();
+  const address = document.getElementById("cfAddress").value.trim();
+  const note = document.getElementById("cfNote").value.trim();
+  const errEl = document.getElementById("cfErr");
+  errEl.textContent = "";
+  if(!name || !phone || !address){ errEl.textContent = "يرجى تعبئة الاسم والهاتف والعنوان"; return; }
+
+  const byStore = {};
+  Object.values(state.cart).forEach(e=>{
+    if(!byStore[e.storeId]) byStore[e.storeId] = {storeId:e.storeId, items:[]};
+    byStore[e.storeId].items.push(e);
+  });
+
+  const loc = state.checkoutLoc || {};
+  let lastOrderCode = null;
+  try{
+    for(const grp of Object.values(byStore)){
+      const subtotal = grp.items.reduce((a,e)=>a+e.product.price*e.qty,0);
+      const total = subtotal + DELIVERY_FEE;
+      const orderRow = {
+        store_id: grp.storeId,
+        customer_id: state.session ? state.session.user.id : null,
+        guest_name: name, guest_phone: phone,
+        address, lat: loc.lat||null, lng: loc.lng||null, note,
+        subtotal, delivery_fee: DELIVERY_FEE, total, stage: 0
+      };
+      const {data:order, error} = await sb.from("orders").insert(orderRow).select().single();
+      if(error) throw error;
+      const items = grp.items.map(e=>({ order_id: order.id, product_id: e.product.id, name: e.product.name, qty: e.qty, price: e.product.price }));
+      const {error:itemsErr} = await sb.from("order_items").insert(items);
+      if(itemsErr) throw itemsErr;
+      lastOrderCode = order.order_code;
+    }
+  }catch(e){ errEl.textContent = "تعذر إرسال الطلب، حاول مرة أخرى"; console.error(e); return; }
+
+  state.cart = {}; state.checkoutLoc = null;
+  renderCart();
+  closeModal("checkoutBackdrop");
+  ["cfName","cfPhone","cfAddress","cfNote"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("cfLocDisplay").textContent = "لم يتم تحديد الموقع بعد (اختياري لكن يسهّل الوصول)";
+  document.getElementById("confOrderId").textContent = lastOrderCode;
+  document.querySelectorAll("#trackerBox .t-step").forEach((s,i)=> s.classList.toggle("done", i===0));
+  openModal("confirmBackdrop");
+};
+document.getElementById("closeConfirm").onclick = ()=> closeModal("confirmBackdrop");
+
+/* ============== TRACK ORDER (guest/customer) ============== */
+document.getElementById("tkSubmit").onclick = async ()=>{
+  const code = document.getElementById("tkCode").value.trim();
+  const phone = document.getElementById("tkPhone").value.trim();
+  const errEl = document.getElementById("tkErr");
+  errEl.textContent = "";
+  if(!code || !phone){ errEl.textContent = "أدخل رقم الطلب ورقم الهاتف"; return; }
+  const {data, error} = await sb.rpc("track_order", {p_order_code: code, p_phone: phone});
+  const box = document.getElementById("tkResult");
+  if(error || !data || data.length===0){ box.innerHTML = ""; errEl.textContent = "لم يتم العثور على طلب مطابق"; return; }
+  const o = data[0];
+  const stage = o.stage;
+  box.innerHTML = `<p style="font-size:13px;">متجر: <b>${esc(o.store_name)}</b> — الإجمالي: <b>${sar(o.total)}</b></p>
+    <div class="tracker">${STAGES.map((s,i)=>`<div class="t-step ${i<=stage?"done":""}"><div class="t-dot">${["١","٢","٣","٤","٥"][i]}</div><span>${s}</span></div>`).join("")}</div>`;
+};
+
+/* ============== IMAGE UPLOAD HELPER ============== */
+async function uploadImage(file, bucket, pathPrefix){
+  const ext = (file.name.split(".").pop()||"jpg").toLowerCase();
+  const path = `${pathPrefix}/${Date.now()}.${ext}`;
+  const {error} = await sb.storage.from(bucket).upload(path, file, {upsert:true});
+  if(error) throw error;
+  const {data} = sb.storage.from(bucket).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/* ============== MERCHANT DASHBOARD ============== */
+async function loadMerchant(){
+  const uid = state.session?.user?.id;
+  if(!uid) return;
+  let {data: store} = await sb.from("stores").select("*, products(*)").eq("merchant_id", uid).maybeSingle();
+  if(!store){
+    const {data:created, error} = await sb.from("stores").insert({merchant_id: uid, name: state.profile.full_name + " - متجر جديد"}).select("*, products(*)").single();
+    if(error){ toast("تعذر إنشاء المتجر"); return; }
+    store = created;
+  }
+  state.myStore = store;
+  document.getElementById("merchStoreTitle").textContent = store.name;
+  document.getElementById("sfName").value = store.name||"";
+  document.getElementById("sfCategory").value = store.category||"";
+  document.getElementById("sfArea").value = store.area||"";
+  document.getElementById("sfPhone").value = store.phone||"";
+  document.getElementById("sfPhone2").value = store.phone2||"";
+  document.getElementById("sfAddress").value = store.address||"";
+  document.getElementById("sfDesc").value = store.description||"";
+  document.getElementById("storeLogoPreview").src = store.logo_url || "";
+  if(store.lat){
+    state.storeLoc = {lat:store.lat, lng:store.lng};
+    document.getElementById("sfLocDisplay").innerHTML = `📍 تم تحديد الموقع — <a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${store.lat},${store.lng}">عرض في خرائط قوقل ↗</a>`;
+  }
+  renderMerchantProducts();
+  await renderMerchantOrders();
+}
+document.getElementById("storeLogoInput").addEventListener("change", async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  try{
+    const url = await uploadImage(file, "store-logos", state.myStore.id);
+    document.getElementById("storeLogoPreview").src = url;
+    await sb.from("stores").update({logo_url:url}).eq("id", state.myStore.id);
+    state.myStore.logo_url = url;
+    toast("تم تحديث شعار المتجر");
+  }catch(err){ toast("تعذر رفع الصورة"); }
+});
+document.getElementById("saveStoreBtn").onclick = async ()=>{
+  const payload = {
+    name: document.getElementById("sfName").value.trim() || state.myStore.name,
+    category: document.getElementById("sfCategory").value.trim() || "أخرى",
+    area: document.getElementById("sfArea").value.trim(),
+    phone: document.getElementById("sfPhone").value.trim(),
+    phone2: document.getElementById("sfPhone2").value.trim(),
+    address: document.getElementById("sfAddress").value.trim(),
+    description: document.getElementById("sfDesc").value.trim(),
+  };
+  if(state.storeLoc){ payload.lat = state.storeLoc.lat; payload.lng = state.storeLoc.lng; }
+  const {error} = await sb.from("stores").update(payload).eq("id", state.myStore.id);
+  if(error){ toast("تعذر حفظ البيانات"); return; }
+  toast("تم حفظ بيانات المتجر");
+  document.getElementById("merchStoreTitle").textContent = payload.name;
+};
+
+function renderMerchantProducts(){
+  const products = state.myStore.products || [];
+  document.getElementById("mStatProducts").textContent = products.length.toLocaleString("ar-SA");
+  const body = document.getElementById("merchantProductsBody");
+  body.innerHTML = products.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد منتجات — أضف أول منتج لمتجرك.</td></tr>';
+  products.forEach(p=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td style="display:flex;align-items:center;gap:8px;">
+        <div class="product-thumb" style="width:34px;height:34px;">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>${esc(p.name)}</td>
+      <td><input class="price-input num" type="number" value="${p.price}" data-price="${p.id}"></td>
+      <td><span class="switch ${p.active?"on":""}" data-toggle="${p.id}"></span></td>
+      <td><button class="mini-btn ghost" data-edit="${p.id}">تعديل</button> <button class="mini-btn ghost" data-del="${p.id}">حذف</button></td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll("[data-price]").forEach(inp=>{
+    inp.addEventListener("change", async (e)=>{
+      const v = parseFloat(e.target.value)||0;
+      await sb.from("products").update({price:v}).eq("id", inp.dataset.price);
+      toast("تم تحديث السعر");
+    });
+  });
+  body.querySelectorAll("[data-toggle]").forEach(sw=>{
+    sw.addEventListener("click", async ()=>{
+      const p = products.find(x=>x.id===sw.dataset.toggle);
+      const newVal = !p.active;
+      await sb.from("products").update({active:newVal}).eq("id", p.id);
+      p.active = newVal; sw.classList.toggle("on", newVal);
+    });
+  });
+  body.querySelectorAll("[data-del]").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      if(!confirm("حذف هذا المنتج نهائيًا؟")) return;
+      await sb.from("products").delete().eq("id", b.dataset.del);
+      state.myStore.products = state.myStore.products.filter(p=>p.id!==b.dataset.del);
+      renderMerchantProducts();
+    });
+  });
+  body.querySelectorAll("[data-edit]").forEach(b=>{
+    b.addEventListener("click", ()=> openProductModal(products.find(p=>p.id===b.dataset.edit)));
+  });
+}
+
+async function renderMerchantOrders(){
+  const {data: orders} = await sb.from("orders").select("*").eq("store_id", state.myStore.id).order("created_at", {ascending:false});
+  const list = orders || [];
+  document.getElementById("mStatOrders").textContent = list.length.toLocaleString("ar-SA");
+  const sales = list.reduce((a,o)=>a+Number(o.subtotal),0);
+  document.getElementById("mStatSales").textContent = sar(sales);
+  document.getElementById("mStatCommission").textContent = sar(Math.round(sales*0.01));
+  const body = document.getElementById("merchantOrdersBody");
+  body.innerHTML = list.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد طلبات بعد.</td></tr>';
+  list.forEach(o=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.guest_name)}</td><td class="num">${sar(o.subtotal)}</td><td>${stageBadge(o.stage)}</td>`;
+    body.appendChild(tr);
+  });
+}
+function stageBadge(stage){
+  if(stage===0) return '<span class="badge new">طلب جديد</span>';
+  if(stage===4) return '<span class="badge done">تم التسليم</span>';
+  return '<span class="badge progress">'+STAGES[stage]+'</span>';
+}
+
+/* Product add/edit modal */
+document.getElementById("addProductBtn").onclick = ()=> openProductModal(null);
+function openProductModal(product){
+  state.editingProductId = product ? product.id : null;
+  document.getElementById("productModalTitle").textContent = product ? "تعديل منتج" : "إضافة منتج";
+  document.getElementById("prName").value = product?.name || "";
+  document.getElementById("prDesc").value = product?.description || "";
+  document.getElementById("prPrice").value = product?.price || "";
+  document.getElementById("prodImgPreview").src = product?.image_url || "";
+  document.getElementById("prErr").textContent = "";
+  state.prodImageFile = null;
+  openModal("productBackdrop");
+}
+document.getElementById("prCancel").onclick = ()=> closeModal("productBackdrop");
+document.getElementById("prodImgInput").addEventListener("change", (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  state.prodImageFile = file;
+  document.getElementById("prodImgPreview").src = URL.createObjectURL(file);
+});
+document.getElementById("prSave").onclick = async ()=>{
+  const name = document.getElementById("prName").value.trim();
+  const description = document.getElementById("prDesc").value.trim();
+  const price = parseFloat(document.getElementById("prPrice").value);
+  const errEl = document.getElementById("prErr");
+  if(!name || isNaN(price) || price<0){ errEl.textContent = "أدخل اسم المنتج وسعرًا صحيحًا"; return; }
+  try{
+    let image_url;
+    if(state.prodImageFile){ image_url = await uploadImage(state.prodImageFile, "product-images", state.myStore.id); }
+    if(state.editingProductId){
+      const payload = {name, description, price};
+      if(image_url) payload.image_url = image_url;
+      await sb.from("products").update(payload).eq("id", state.editingProductId);
+    } else {
+      await sb.from("products").insert({store_id: state.myStore.id, name, description, price, image_url});
+    }
+    closeModal("productBackdrop");
+    await loadMerchant();
+    toast("تم حفظ المنتج");
+  }catch(e){ errEl.textContent = "تعذر حفظ المنتج"; }
+};
+
+/* ============== COURIER DASHBOARD ============== */
+async function loadCourier(){
+  const uid = state.session?.user?.id;
+  const {data: available} = await sb.from("orders").select("*").is("courier_id", null).order("created_at");
+  const {data: mine} = await sb.from("orders").select("*, stores(name)").eq("courier_id", uid).order("created_at", {ascending:false});
+  const av = available||[]; const mn = mine||[];
+  document.getElementById("dStatAvailable").textContent = av.length.toLocaleString("ar-SA");
+  const active = mn.filter(o=>o.stage<4), done = mn.filter(o=>o.stage===4);
+  document.getElementById("dStatActive").textContent = active.length.toLocaleString("ar-SA");
+  document.getElementById("dStatDone").textContent = done.length.toLocaleString("ar-SA");
+  document.getElementById("dStatEarnings").textContent = sar(done.reduce((a,o)=>a+Number(o.delivery_fee),0));
+
+  const ab = document.getElementById("availableOrdersBody");
+  ab.innerHTML = av.length ? "" : '<tr class="empty-row"><td colspan="5">لا توجد طلبات متاحة الآن.</td></tr>';
+  av.forEach(o=>{
+    const tr = document.createElement("tr");
+    const locLink = o.lat ? `<a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${o.lat},${o.lng}">خريطة ↗</a>` : "—";
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.address)}</td><td>${locLink}</td><td class="num">${sar(o.delivery_fee)}</td><td><button class="mini-btn" data-accept="${o.id}">قبول الطلب</button></td>`;
+    ab.appendChild(tr);
+  });
+  ab.querySelectorAll("[data-accept]").forEach(b=>{
+    b.onclick = async ()=>{
+      const {error} = await sb.from("orders").update({courier_id: uid, stage: 1}).eq("id", b.dataset.accept).is("courier_id", null);
+      if(error){ toast("تم قبول الطلب من مندوب آخر"); } else toast("تم قبول الطلب");
+      loadCourier();
+    };
+  });
+
+  const mb = document.getElementById("myOrdersBody");
+  mb.innerHTML = mn.length ? "" : '<tr class="empty-row"><td colspan="3">لم تقبل أي طلب بعد.</td></tr>';
+  mn.forEach(o=>{
+    const tr = document.createElement("tr");
+    let action = "—";
+    if(o.stage>=1 && o.stage<4) action = `<button class="mini-btn ghost" data-advance="${o.id}">${STAGES[o.stage+1]} ←</button>`;
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${stageBadge(o.stage)}</td><td>${action}</td>`;
+    mb.appendChild(tr);
+  });
+  mb.querySelectorAll("[data-advance]").forEach(b=>{
+    b.onclick = async ()=>{
+      const {data:o} = await sb.from("orders").select("stage").eq("id", b.dataset.advance).single();
+      const newStage = o.stage+1;
+      await sb.from("orders").update({stage:newStage}).eq("id", b.dataset.advance);
+      if(newStage===4) toast("تم تسليم الطلب 🎉");
+      loadCourier();
+    };
+  });
+}
+
+/* ============== ADMIN DASHBOARD ============== */
+document.getElementById("adminTabs").querySelectorAll("button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.getElementById("adminTabs").querySelectorAll("button").forEach(x=>x.classList.toggle("active", x===b));
+    ["users","stores","orders","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
+  });
+});
+
+async function loadAdmin(){
+  const {data: orders} = await sb.from("orders").select("*, stores(name)").order("created_at", {ascending:false});
+  const {data: stores} = await sb.from("stores").select("*, profiles!stores_merchant_id_fkey(full_name)");
+  const {data: profiles} = await sb.from("profiles").select("*").order("created_at", {ascending:false});
+  const ord = orders||[], strs = stores||[], profs = profiles||[];
+  const couriers = profs.filter(p=>p.role==="courier");
+
+  document.getElementById("aStatOrders").textContent = ord.length.toLocaleString("ar-SA");
+  document.getElementById("aStatStores").textContent = strs.length.toLocaleString("ar-SA");
+  document.getElementById("aStatCouriers").textContent = couriers.length.toLocaleString("ar-SA");
+  const commission = ord.reduce((a,o)=>a+Number(o.subtotal)*0.01,0);
+  document.getElementById("aStatRevenue").textContent = sar(Math.round(commission));
+
+  const ub = document.getElementById("adminUsersBody");
+  const manageable = profs.filter(p=>p.role!=="customer");
+  ub.innerHTML = manageable.length ? "" : '<tr class="empty-row"><td colspan="5">لا يوجد مستخدمون بعد.</td></tr>';
+  manageable.forEach(p=>{
+    const tr = document.createElement("tr");
+    const roleAr = {admin:"إدارة", merchant:"تاجر", courier:"مندوب"}[p.role]||p.role;
+    const isSelf = state.session && p.id === state.session.user.id;
+    tr.innerHTML = `<td>${esc(p.full_name)}</td><td class="num">${esc(p.username)}</td><td><span class="badge progress">${roleAr}</span></td><td class="num">${esc(p.phone||"—")}</td>
+      <td>${isSelf?"":`<button class="mini-btn ghost" data-deluser="${p.id}">حذف</button>`}</td>`;
+    ub.appendChild(tr);
+  });
+  ub.querySelectorAll("[data-deluser]").forEach(b=>{
+    b.onclick = async ()=>{
+      if(!confirm("حذف هذا الحساب نهائيًا؟")) return;
+      try{
+        await callFunction("admin-users", {action:"delete", user_id: b.dataset.deluser}, true);
+        toast("تم حذف الحساب");
+        loadAdmin();
+      }catch(e){ toast(e.message || "تعذر حذف الحساب"); }
+    };
+  });
+
+  const sb2 = document.getElementById("adminStoresBody");
+  sb2.innerHTML = strs.length ? "" : '<tr class="empty-row"><td colspan="5">لا توجد متاجر بعد.</td></tr>';
+  strs.forEach(s=>{
+    const sOrders = ord.filter(o=>o.store_id===s.id);
+    const sales = sOrders.reduce((a,o)=>a+Number(o.subtotal),0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${esc(s.name)}</td><td>${esc(s.profiles?.full_name||"—")}</td><td class="num">${sar(sales)}</td><td class="num">${sar(Math.round(sales*0.01))}</td><td><span class="badge ${s.active?"done":"new"}">${s.active?"نشط":"موقوف"}</span></td>`;
+    sb2.appendChild(tr);
+  });
+
+  const ob = document.getElementById("adminOrdersBody");
+  ob.innerHTML = ord.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد طلبات بعد.</td></tr>';
+  ord.forEach(o=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.stores?.name||"—")}</td><td class="num">${sar(o.total)}</td>
+      <td><div style="font-size:11.5px;">${STAGES.map((s,i)=> (i<=o.stage? "<b>"+s+"</b>":s)).join(" ← ")}</div></td>`;
+    ob.appendChild(tr);
+  });
+
+  const {data: settings} = await sb.from("site_settings").select("*").eq("id",1).single();
+  if(settings){
+    document.getElementById("siteNameInput").value = settings.site_name || "";
+    document.getElementById("siteLogoPreview").src = settings.logo_url || "";
+  }
+}
+
+document.getElementById("openCreateUser").onclick = ()=>{
+  ["uFullName","uUsername","uPhone","uPassword"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("uErr").textContent = "";
+  openModal("userBackdrop");
+};
+document.getElementById("uSubmit").onclick = async ()=>{
+  const role = document.getElementById("uRole").value;
+  const full_name = document.getElementById("uFullName").value.trim();
+  const username = document.getElementById("uUsername").value.trim();
+  const phone = document.getElementById("uPhone").value.trim();
+  const password = document.getElementById("uPassword").value;
+  const errEl = document.getElementById("uErr");
+  errEl.textContent = "";
+  if(!full_name || !username || password.length<6){ errEl.textContent = "يرجى تعبئة كل الحقول (كلمة مرور 6 أحرف على الأقل)"; return; }
+  try{
+    await callFunction("admin-users", {action:"create", role, username, password, full_name, phone}, true);
+    closeModal("userBackdrop");
+    toast("تم إنشاء الحساب بنجاح");
+    loadAdmin();
+  }catch(e){ errEl.textContent = e.message || "خطأ في الاتصال"; }
+};
+
+document.getElementById("siteLogoInput").addEventListener("change", async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  try{
+    const url = await uploadImage(file, "site-assets", "logo");
+    document.getElementById("siteLogoPreview").src = url;
+    await sb.from("site_settings").update({logo_url:url}).eq("id",1);
+    applyBrand(url, document.getElementById("siteNameInput").value);
+    toast("تم تحديث شعار المنصة");
+  }catch(err){ toast("تعذر رفع الصورة"); }
+});
+document.getElementById("saveSiteSettings").onclick = async ()=>{
+  const site_name = document.getElementById("siteNameInput").value.trim() || "سوق السودان";
+  await sb.from("site_settings").update({site_name}).eq("id",1);
+  applyBrand(document.getElementById("siteLogoPreview").src, site_name);
+  toast("تم حفظ الإعدادات");
+};
+
+function applyBrand(logoUrl, name){
+  document.getElementById("siteName").textContent = name || "سوق السودان";
+  const mark = document.getElementById("brandMark");
+  if(logoUrl && !logoUrl.endsWith("/") ){ mark.innerHTML = `<img src="${logoUrl}">`; }
+}
+
+/* ============== BOOT ============== */
+async function boot(){
+  await checkBootstrap();
+  await refreshAuth();
+  const {data: settings} = await sb.from("site_settings").select("*").eq("id",1).maybeSingle();
+  if(settings) applyBrand(settings.logo_url, settings.site_name);
+
+  if(!state.hasAnyAdmin){
+    switchView("bootstrap");
+    return;
+  }
+  if(state.profile){
+    if(state.profile.role==="merchant") switchView("merchant");
+    else if(state.profile.role==="courier") switchView("courier");
+    else if(state.profile.role==="admin") switchView("admin");
+    else switchView("home");
+  } else {
+    switchView("home");
+  }
+}
+boot();
+
+})();
+</script>
+</body>
+</html>
