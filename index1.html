@@ -156,61 +156,6 @@
   .center-box{max-width:420px;margin:60px auto;}
   footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:40px;text-align:center;color:var(--slate);font-size:12.5px;}
   .loading-dim{opacity:.5;pointer-events:none;}
-
-  /* ===== Simplified / mobile-first refinements ===== */
-  .btn{min-height:44px;}
-  .btn-sm{min-height:38px;}
-  .add-btn{width:36px;height:36px;font-size:19px;}
-  .close-x{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;}
-  .close-x:hover{background:var(--sand);}
-
-  .home-link-btn{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;}
-  .home-link-btn:hover{background:var(--teal-deep);}
-
-  /* clickable images -> lightbox */
-  .zoomable{cursor:zoom-in;}
-  #lightboxBackdrop{position:fixed;inset:0;background:rgba(10,14,20,.92);z-index:300;display:none;align-items:center;justify-content:center;padding:24px;}
-  #lightboxBackdrop.show{display:flex;}
-  #lightboxBackdrop img{max-width:92vw;max-height:88vh;border-radius:10px;object-fit:contain;}
-  #lightboxClose{position:absolute;top:18px;left:18px;color:#fff;font-size:22px;width:42px;height:42px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;}
-
-  /* image fit consistency */
-  .store-cover img, .product-thumb img, .img-preview{object-fit:cover;}
-  .store-cover{aspect-ratio:16/9;height:auto;}
-  .product-thumb{border-radius:12px;}
-
-  /* dual upload buttons (camera + gallery) */
-  .upload-choice{display:flex;gap:8px;flex-wrap:wrap;}
-  .upload-choice label{flex:1;min-width:110px;text-align:center;}
-
-  /* reports */
-  .report-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px;}
-  .report-controls .field{margin-bottom:0;min-width:160px;flex:1;}
-  .report-total{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0;}
-  .report-total .stat-card{flex:1;min-width:130px;}
-
-  /* mobile: turn tables into stacked cards */
-  @media(max-width:680px){
-    body{font-size:15px;}
-    .wrap{padding:0 16px;}
-    .store-grid{gap:14px;}
-    .stat-row{grid-template-columns:repeat(2,1fr);gap:10px;}
-    .stat-card{padding:12px 14px;}
-    .stat-card .n{font-size:19px;}
-    .card{padding:16px;}
-    .field-row{flex-direction:column;gap:0;}
-    .header-row{padding:10px 0;}
-    .brand-text span{display:none;}
-    .modal-box{padding:20px;border-radius:14px;}
-    table thead{display:none;}
-    table, table tbody, table tr, table td{display:block;width:100%;}
-    table tr{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--white);}
-    table td{border-bottom:none;padding:6px 2px;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;}
-    table td:before{content:attr(data-label);font-size:11px;color:var(--slate);font-weight:700;}
-    table td:empty, table td:has(> :only-child):not([data-label]){display:block;}
-    .empty-row{border:none !important;}
-    .report-controls{flex-direction:column;align-items:stretch;}
-  }
 </style>
 </head>
 <body>
@@ -250,11 +195,10 @@
 
     <div class="card">
       <h4>بيانات المتجر</h4>
-      <div class="img-upload" style="margin-bottom:16px;align-items:flex-start;">
-        <img class="img-preview zoomable" id="storeLogoPreview" src="" alt="">
-        <div class="upload-choice">
-          <label class="upload-btn">📷 التقاط صورة<input type="file" accept="image/*" capture="environment" id="storeLogoCameraInput" style="display:none;"></label>
-          <label class="upload-btn">🖼️ من المعرض<input type="file" accept="image/*" id="storeLogoInput" style="display:none;"></label>
+      <div class="img-upload" style="margin-bottom:16px;">
+        <img class="img-preview" id="storeLogoPreview" src="" alt="">
+        <div>
+          <label class="upload-btn">تغيير الشعار<input type="file" accept="image/*" id="storeLogoInput" style="display:none;"></label>
         </div>
       </div>
       <div class="field-row">
@@ -327,7 +271,6 @@
       <button class="active" data-tab="users">المستخدمون</button>
       <button data-tab="stores">المتاجر</button>
       <button data-tab="orders">الطلبات</button>
-      <button data-tab="reports">التقارير</button>
       <button data-tab="settings">إعدادات الموقع</button>
     </div>
 
@@ -354,32 +297,12 @@
       </div>
     </div>
 
-    <div id="adminTab-reports" style="display:none;">
-      <div class="card">
-        <h4>تقرير نشاط لفترة محددة (لحساب عمولة المنصة)</h4>
-        <div class="report-controls">
-          <div class="field"><label>نوع التقرير</label>
-            <select id="repType"><option value="store">تقرير متجر (تاجر)</option><option value="courier">تقرير مندوب</option></select>
-          </div>
-          <div class="field"><label id="repEntityLabel">اختر المتجر</label><select id="repEntity"></select></div>
-          <div class="field"><label>من تاريخ</label><input type="date" id="repFrom"></div>
-          <div class="field"><label>إلى تاريخ</label><input type="date" id="repTo"></div>
-          <button class="btn btn-primary btn-sm" id="repGenerate">إنشاء التقرير</button>
-        </div>
-        <div class="report-total" id="repTotals"></div>
-        <table><thead id="repTableHead"></thead><tbody id="repTableBody"></tbody></table>
-      </div>
-    </div>
-
     <div id="adminTab-settings" style="display:none;">
       <div class="card" style="max-width:480px;">
         <h4>شعار المنصة واسمها</h4>
-        <div class="img-upload" style="margin-bottom:16px;align-items:flex-start;">
-          <img class="img-preview zoomable" id="siteLogoPreview" src="" alt="">
-          <div class="upload-choice">
-            <label class="upload-btn">📷 التقاط صورة<input type="file" accept="image/*" capture="environment" id="siteLogoCameraInput" style="display:none;"></label>
-            <label class="upload-btn">🖼️ من المعرض<input type="file" accept="image/*" id="siteLogoInput" style="display:none;"></label>
-          </div>
+        <div class="img-upload" style="margin-bottom:16px;">
+          <img class="img-preview" id="siteLogoPreview" src="" alt="">
+          <label class="upload-btn">تغيير الشعار<input type="file" accept="image/*" id="siteLogoInput" style="display:none;"></label>
         </div>
         <div class="field"><label>اسم المنصة</label><input id="siteNameInput"></div>
         <button class="btn btn-primary" id="saveSiteSettings">حفظ</button>
@@ -517,12 +440,9 @@
 <div class="modal-backdrop" id="productBackdrop">
   <div class="modal-box">
     <h3 id="productModalTitle">إضافة منتج</h3>
-    <div class="img-upload" style="margin-bottom:16px;align-items:flex-start;">
-      <img class="img-preview zoomable" id="prodImgPreview" src="" alt="">
-      <div class="upload-choice">
-        <label class="upload-btn">📷 التقاط صورة<input type="file" accept="image/*" capture="environment" id="prodImgCameraInput" style="display:none;"></label>
-        <label class="upload-btn">🖼️ من المعرض<input type="file" accept="image/*" id="prodImgInput" style="display:none;"></label>
-      </div>
+    <div class="img-upload" style="margin-bottom:16px;">
+      <img class="img-preview" id="prodImgPreview" src="" alt="">
+      <label class="upload-btn">اختيار صورة<input type="file" accept="image/*" id="prodImgInput" style="display:none;"></label>
     </div>
     <div class="field"><label>اسم المنتج</label><input id="prName"></div>
     <div class="field"><label>الوصف</label><textarea id="prDesc" rows="2"></textarea></div>
@@ -550,8 +470,6 @@
     <button class="btn btn-primary" id="uSubmit" style="width:100%;justify-content:center;">إنشاء الحساب</button>
   </div>
 </div>
-
-<div id="lightboxBackdrop"><button id="lightboxClose">✕</button><img id="lightboxImg" src="" alt=""></div>
 
 <div class="toast" id="toast"></div>
 
@@ -586,18 +504,6 @@ const STAGES = ["طلب جديد","قبول المندوب","استلام من �
 function emailFor(username){ return username.trim().toLowerCase() + "@sudan-market.local"; }
 function sar(n){ return (Number(n)||0).toLocaleString("ar-SA") + " ر.س"; }
 function esc(s){ return (s||"").toString().replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-
-function openLightbox(url){
-  if(!url) return;
-  document.getElementById("lightboxImg").src = url;
-  document.getElementById("lightboxBackdrop").classList.add("show");
-}
-document.getElementById("lightboxClose").onclick = ()=> document.getElementById("lightboxBackdrop").classList.remove("show");
-document.getElementById("lightboxBackdrop").addEventListener("click", (e)=>{ if(e.target.id==="lightboxBackdrop") e.currentTarget.classList.remove("show"); });
-document.addEventListener("click", (e)=>{
-  const img = e.target.closest("img.zoomable");
-  if(img && img.src && !img.src.endsWith("/")) openLightbox(img.src);
-});
 
 const toastEl = document.getElementById("toast");
 let toastTimer;
@@ -650,7 +556,7 @@ function renderHeader(){
     if(p.role==="courier") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="courier">لوحة المندوب</button>`;
     if(p.role==="admin") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="admin">لوحة الإدارة</button>`;
     let cartBtn = p.role==="customer" ? `<button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>` : "";
-    let homeBtn = `<button class="btn home-link-btn btn-sm" data-go="home">🛍️ تصفح المتاجر</button>`;
+    let homeBtn = p.role!=="customer" ? `<button class="btn btn-ghost btn-sm" data-go="home">تصفح المتاجر</button>` : "";
     el.innerHTML = `${homeBtn}${cartBtn}${dashBtn}
       <span class="pill">👋 ${esc(p.full_name)}</span>
       <button class="btn btn-ghost btn-sm" id="hLogout">خروج</button>`;
@@ -738,10 +644,8 @@ document.getElementById("reSubmit").onclick = async ()=>{
 
 /* ============== BOOTSTRAP FIRST ADMIN ============== */
 async function checkBootstrap(){
-  try{
-    const {data, error} = await sb.rpc("has_any_admin");
-    state.hasAnyAdmin = error ? true : !!data; // fail safe: don't trap an existing admin behind a broken check
-  }catch(e){ state.hasAnyAdmin = true; }
+  const {count} = await sb.from("profiles").select("id", {count:"exact", head:true}).eq("role","admin");
+  state.hasAnyAdmin = !!count && count > 0;
 }
 document.getElementById("bsSubmit").onclick = async ()=>{
   const full_name = document.getElementById("bsFullName").value.trim();
@@ -845,7 +749,7 @@ function renderStores(){
     const card = document.createElement("div");
     card.className = "store-card";
     card.innerHTML = `
-      <div class="store-cover">${s.logo_url ? `<img class="zoomable" src="${esc(s.logo_url)}">` : ""}<span class="store-cat">${esc(s.category)}</span></div>
+      <div class="store-cover">${s.logo_url ? `<img src="${esc(s.logo_url)}">` : ""}<span class="store-cat">${esc(s.category)}</span></div>
       <div class="store-body">
         <h4>${esc(s.name)}</h4>
         <div class="store-meta">${s.area?`<span>📍 ${esc(s.area)}</span>`:""}${s.lat?`<a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${s.lat},${s.lng}">الموقع على الخريطة ↗</a>`:""}</div>
@@ -873,7 +777,7 @@ function openStorePanel(storeId){
     const row = document.createElement("div");
     row.className = "product-row";
     row.innerHTML = `
-      <div class="product-thumb">${p.image_url?`<img class="zoomable" src="${esc(p.image_url)}">`:"🛍️"}</div>
+      <div class="product-thumb">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>
       <div class="product-info"><h5>${esc(p.name)}</h5><span>${esc(store.name)}</span></div>
       <div class="price-tag num">${sar(p.price)}</div>
       <button class="add-btn" title="أضف للسلة">+</button>`;
@@ -1052,8 +956,8 @@ async function loadMerchant(){
   renderMerchantProducts();
   await renderMerchantOrders();
 }
-async function handleStoreLogoFile(file){
-  if(!file) return;
+document.getElementById("storeLogoInput").addEventListener("change", async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
   try{
     const url = await uploadImage(file, "store-logos", state.myStore.id);
     document.getElementById("storeLogoPreview").src = url;
@@ -1061,9 +965,7 @@ async function handleStoreLogoFile(file){
     state.myStore.logo_url = url;
     toast("تم تحديث شعار المتجر");
   }catch(err){ toast("تعذر رفع الصورة"); }
-}
-document.getElementById("storeLogoInput").addEventListener("change", e=> handleStoreLogoFile(e.target.files[0]));
-document.getElementById("storeLogoCameraInput").addEventListener("change", e=> handleStoreLogoFile(e.target.files[0]));
+});
 document.getElementById("saveStoreBtn").onclick = async ()=>{
   const payload = {
     name: document.getElementById("sfName").value.trim() || state.myStore.name,
@@ -1088,11 +990,11 @@ function renderMerchantProducts(){
   body.innerHTML = products.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد منتجات — أضف أول منتج لمتجرك.</td></tr>';
   products.forEach(p=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="المنتج" style="display:flex;align-items:center;gap:8px;">
+    tr.innerHTML = `<td style="display:flex;align-items:center;gap:8px;">
         <div class="product-thumb" style="width:34px;height:34px;">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>${esc(p.name)}</td>
-      <td data-label="السعر"><input class="price-input num" type="number" value="${p.price}" data-price="${p.id}"></td>
-      <td data-label="الحالة"><span class="switch ${p.active?"on":""}" data-toggle="${p.id}"></span></td>
-      <td data-label=""><button class="mini-btn ghost" data-edit="${p.id}">تعديل</button> <button class="mini-btn ghost" data-del="${p.id}">حذف</button></td>`;
+      <td><input class="price-input num" type="number" value="${p.price}" data-price="${p.id}"></td>
+      <td><span class="switch ${p.active?"on":""}" data-toggle="${p.id}"></span></td>
+      <td><button class="mini-btn ghost" data-edit="${p.id}">تعديل</button> <button class="mini-btn ghost" data-del="${p.id}">حذف</button></td>`;
     body.appendChild(tr);
   });
   body.querySelectorAll("[data-price]").forEach(inp=>{
@@ -1113,10 +1015,9 @@ function renderMerchantProducts(){
   body.querySelectorAll("[data-del]").forEach(b=>{
     b.addEventListener("click", async ()=>{
       if(!confirm("حذف هذا المنتج نهائيًا؟")) return;
-      const {error} = await sb.from("products").delete().eq("id", b.dataset.del);
-      if(error){ toast("تعذر حذف المنتج: " + error.message); return; }
-      toast("تم حذف المنتج");
-      await loadMerchant();
+      await sb.from("products").delete().eq("id", b.dataset.del);
+      state.myStore.products = state.myStore.products.filter(p=>p.id!==b.dataset.del);
+      renderMerchantProducts();
     });
   });
   body.querySelectorAll("[data-edit]").forEach(b=>{
@@ -1135,7 +1036,7 @@ async function renderMerchantOrders(){
   body.innerHTML = list.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد طلبات بعد.</td></tr>';
   list.forEach(o=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="العميل">${esc(o.guest_name)}</td><td class="num" data-label="الإجمالي">${sar(o.subtotal)}</td><td data-label="الحالة">${stageBadge(o.stage)}</td>`;
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.guest_name)}</td><td class="num">${sar(o.subtotal)}</td><td>${stageBadge(o.stage)}</td>`;
     body.appendChild(tr);
   });
 }
@@ -1159,13 +1060,11 @@ function openProductModal(product){
   openModal("productBackdrop");
 }
 document.getElementById("prCancel").onclick = ()=> closeModal("productBackdrop");
-function handleProdImgFile(file){
-  if(!file) return;
+document.getElementById("prodImgInput").addEventListener("change", (e)=>{
+  const file = e.target.files[0]; if(!file) return;
   state.prodImageFile = file;
   document.getElementById("prodImgPreview").src = URL.createObjectURL(file);
-}
-document.getElementById("prodImgInput").addEventListener("change", e=> handleProdImgFile(e.target.files[0]));
-document.getElementById("prodImgCameraInput").addEventListener("change", e=> handleProdImgFile(e.target.files[0]));
+});
 document.getElementById("prSave").onclick = async ()=>{
   const name = document.getElementById("prName").value.trim();
   const description = document.getElementById("prDesc").value.trim();
@@ -1205,7 +1104,7 @@ async function loadCourier(){
   av.forEach(o=>{
     const tr = document.createElement("tr");
     const locLink = o.lat ? `<a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${o.lat},${o.lng}">خريطة ↗</a>` : "—";
-    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="العنوان">${esc(o.address)}</td><td data-label="الموقع">${locLink}</td><td class="num" data-label="أجرة التوصيل">${sar(o.delivery_fee)}</td><td data-label=""><button class="mini-btn" data-accept="${o.id}">قبول الطلب</button></td>`;
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.address)}</td><td>${locLink}</td><td class="num">${sar(o.delivery_fee)}</td><td><button class="mini-btn" data-accept="${o.id}">قبول الطلب</button></td>`;
     ab.appendChild(tr);
   });
   ab.querySelectorAll("[data-accept]").forEach(b=>{
@@ -1222,7 +1121,7 @@ async function loadCourier(){
     const tr = document.createElement("tr");
     let action = "—";
     if(o.stage>=1 && o.stage<4) action = `<button class="mini-btn ghost" data-advance="${o.id}">${STAGES[o.stage+1]} ←</button>`;
-    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="الحالة">${stageBadge(o.stage)}</td><td data-label="">${action}</td>`;
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${stageBadge(o.stage)}</td><td>${action}</td>`;
     mb.appendChild(tr);
   });
   mb.querySelectorAll("[data-advance]").forEach(b=>{
@@ -1240,73 +1139,8 @@ async function loadCourier(){
 document.getElementById("adminTabs").querySelectorAll("button").forEach(b=>{
   b.addEventListener("click", ()=>{
     document.getElementById("adminTabs").querySelectorAll("button").forEach(x=>x.classList.toggle("active", x===b));
-    ["users","stores","orders","reports","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
-    if(b.dataset.tab==="reports") populateReportEntities();
+    ["users","stores","orders","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
   });
-});
-
-/* ---- Reports ---- */
-async function populateReportEntities(){
-  const type = document.getElementById("repType").value;
-  document.getElementById("repEntityLabel").textContent = type==="store" ? "اختر المتجر" : "اختر المندوب";
-  const sel = document.getElementById("repEntity");
-  if(type==="store"){
-    const {data} = await sb.from("stores").select("id,name");
-    sel.innerHTML = (data||[]).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("") || "<option disabled>لا توجد متاجر</option>";
-  } else {
-    const {data} = await sb.from("profiles").select("id,full_name").eq("role","courier");
-    sel.innerHTML = (data||[]).map(c=>`<option value="${c.id}">${esc(c.full_name)}</option>`).join("") || "<option disabled>لا يوجد مندوبون</option>";
-  }
-}
-document.getElementById("repType").addEventListener("change", populateReportEntities);
-document.getElementById("repGenerate").addEventListener("click", async ()=>{
-  const type = document.getElementById("repType").value;
-  const entityId = document.getElementById("repEntity").value;
-  const fromVal = document.getElementById("repFrom").value;
-  const toVal = document.getElementById("repTo").value;
-  if(!entityId){ toast("لا يوجد عنصر لإنشاء تقرير له"); return; }
-  if(!fromVal || !toVal){ toast("حدد تاريخ البداية والنهاية"); return; }
-  const fromISO = new Date(fromVal+"T00:00:00").toISOString();
-  const toISO = new Date(toVal+"T23:59:59").toISOString();
-  const head = document.getElementById("repTableHead");
-  const body = document.getElementById("repTableBody");
-  const totals = document.getElementById("repTotals");
-
-  if(type==="store"){
-    const {data, error} = await sb.rpc("store_report", {p_store_id:entityId, p_from:fromISO, p_to:toISO});
-    if(error){ toast("تعذر إنشاء التقرير"); return; }
-    const rows = data||[];
-    head.innerHTML = `<tr><th>رقم الطلب</th><th>التاريخ</th><th>الحالة</th><th>المنتجات</th><th>الإجمالي</th><th>عمولة المنصة</th></tr>`;
-    body.innerHTML = rows.length? "" : '<tr class="empty-row"><td colspan="6">لا توجد طلبات في هذه الفترة.</td></tr>';
-    rows.forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td class="num" data-label="رقم الطلب">${r.order_code}</td><td data-label="التاريخ">${new Date(r.created_at).toLocaleDateString("ar-SA")}</td><td data-label="الحالة">${stageBadge(r.stage)}</td><td class="num" data-label="المنتجات">${sar(r.subtotal)}</td><td class="num" data-label="الإجمالي">${sar(r.total)}</td><td class="num" data-label="عمولة المنصة">${sar(r.commission)}</td>`;
-      body.appendChild(tr);
-    });
-    const totalSales = rows.reduce((a,r)=>a+Number(r.subtotal),0);
-    const totalCommission = rows.reduce((a,r)=>a+Number(r.commission),0);
-    totals.innerHTML = `
-      <div class="stat-card"><div class="n num">${rows.length.toLocaleString("ar-SA")}</div><div class="l">عدد الطلبات</div></div>
-      <div class="stat-card"><div class="n num">${sar(totalSales)}</div><div class="l">إجمالي المبيعات</div></div>
-      <div class="stat-card"><div class="n num">${sar(Math.round(totalCommission))}</div><div class="l">عمولة المنصة المستحقة (١٪)</div></div>`;
-  } else {
-    const {data, error} = await sb.rpc("courier_report", {p_courier_id:entityId, p_from:fromISO, p_to:toISO});
-    if(error){ toast("تعذر إنشاء التقرير"); return; }
-    const rows = data||[];
-    head.innerHTML = `<tr><th>رقم الطلب</th><th>التاريخ</th><th>المتجر</th><th>الحالة</th><th>أجرة التوصيل</th></tr>`;
-    body.innerHTML = rows.length? "" : '<tr class="empty-row"><td colspan="5">لا توجد طلبات في هذه الفترة.</td></tr>';
-    rows.forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td class="num" data-label="رقم الطلب">${r.order_code}</td><td data-label="التاريخ">${new Date(r.created_at).toLocaleDateString("ar-SA")}</td><td data-label="المتجر">${esc(r.store_name)}</td><td data-label="الحالة">${stageBadge(r.stage)}</td><td class="num" data-label="أجرة التوصيل">${sar(r.delivery_fee)}</td>`;
-      body.appendChild(tr);
-    });
-    const delivered = rows.filter(r=>r.stage===4);
-    const totalEarnings = delivered.reduce((a,r)=>a+Number(r.delivery_fee),0);
-    totals.innerHTML = `
-      <div class="stat-card"><div class="n num">${rows.length.toLocaleString("ar-SA")}</div><div class="l">عدد الطلبات</div></div>
-      <div class="stat-card"><div class="n num">${delivered.length.toLocaleString("ar-SA")}</div><div class="l">تم تسليمها</div></div>
-      <div class="stat-card"><div class="n num">${sar(totalEarnings)}</div><div class="l">إجمالي أجور التوصيل</div></div>`;
-  }
 });
 
 async function loadAdmin(){
@@ -1329,8 +1163,8 @@ async function loadAdmin(){
     const tr = document.createElement("tr");
     const roleAr = {admin:"إدارة", merchant:"تاجر", courier:"مندوب"}[p.role]||p.role;
     const isSelf = state.session && p.id === state.session.user.id;
-    tr.innerHTML = `<td data-label="الاسم">${esc(p.full_name)}</td><td class="num" data-label="اسم المستخدم">${esc(p.username)}</td><td data-label="الدور"><span class="badge progress">${roleAr}</span></td><td class="num" data-label="الهاتف">${esc(p.phone||"—")}</td>
-      <td data-label="">${isSelf?"":`<button class="mini-btn ghost" data-deluser="${p.id}">حذف</button>`}</td>`;
+    tr.innerHTML = `<td>${esc(p.full_name)}</td><td class="num">${esc(p.username)}</td><td><span class="badge progress">${roleAr}</span></td><td class="num">${esc(p.phone||"—")}</td>
+      <td>${isSelf?"":`<button class="mini-btn ghost" data-deluser="${p.id}">حذف</button>`}</td>`;
     ub.appendChild(tr);
   });
   ub.querySelectorAll("[data-deluser]").forEach(b=>{
@@ -1350,7 +1184,7 @@ async function loadAdmin(){
     const sOrders = ord.filter(o=>o.store_id===s.id);
     const sales = sOrders.reduce((a,o)=>a+Number(o.subtotal),0);
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="المتجر">${esc(s.name)}</td><td data-label="التاجر">${esc(s.profiles?.full_name||"—")}</td><td class="num" data-label="المبيعات">${sar(sales)}</td><td class="num" data-label="العمولة">${sar(Math.round(sales*0.01))}</td><td data-label="الحالة"><span class="badge ${s.active?"done":"new"}">${s.active?"نشط":"موقوف"}</span></td>`;
+    tr.innerHTML = `<td>${esc(s.name)}</td><td>${esc(s.profiles?.full_name||"—")}</td><td class="num">${sar(sales)}</td><td class="num">${sar(Math.round(sales*0.01))}</td><td><span class="badge ${s.active?"done":"new"}">${s.active?"نشط":"موقوف"}</span></td>`;
     sb2.appendChild(tr);
   });
 
@@ -1358,8 +1192,8 @@ async function loadAdmin(){
   ob.innerHTML = ord.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد طلبات بعد.</td></tr>';
   ord.forEach(o=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="المتجر">${esc(o.stores?.name||"—")}</td><td class="num" data-label="الإجمالي">${sar(o.total)}</td>
-      <td data-label="المسار"><div style="font-size:11.5px;">${STAGES.map((s,i)=> (i<=o.stage? "<b>"+s+"</b>":s)).join(" ← ")}</div></td>`;
+    tr.innerHTML = `<td class="num">${o.order_code}</td><td>${esc(o.stores?.name||"—")}</td><td class="num">${sar(o.total)}</td>
+      <td><div style="font-size:11.5px;">${STAGES.map((s,i)=> (i<=o.stage? "<b>"+s+"</b>":s)).join(" ← ")}</div></td>`;
     ob.appendChild(tr);
   });
 
@@ -1392,8 +1226,8 @@ document.getElementById("uSubmit").onclick = async ()=>{
   }catch(e){ errEl.textContent = e.message || "خطأ في الاتصال"; }
 };
 
-async function handleSiteLogoFile(file){
-  if(!file) return;
+document.getElementById("siteLogoInput").addEventListener("change", async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
   try{
     const url = await uploadImage(file, "site-assets", "logo");
     document.getElementById("siteLogoPreview").src = url;
@@ -1401,9 +1235,7 @@ async function handleSiteLogoFile(file){
     applyBrand(url, document.getElementById("siteNameInput").value);
     toast("تم تحديث شعار المنصة");
   }catch(err){ toast("تعذر رفع الصورة"); }
-}
-document.getElementById("siteLogoInput").addEventListener("change", e=> handleSiteLogoFile(e.target.files[0]));
-document.getElementById("siteLogoCameraInput").addEventListener("change", e=> handleSiteLogoFile(e.target.files[0]));
+});
 document.getElementById("saveSiteSettings").onclick = async ()=>{
   const site_name = document.getElementById("siteNameInput").value.trim() || "سوق السودان";
   await sb.from("site_settings").update({site_name}).eq("id",1);
