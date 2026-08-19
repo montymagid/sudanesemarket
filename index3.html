@@ -9,10 +9,10 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root{
-    --ink:#1D1D1B; --paper:#F7F7F7; --sand:#FFFFFF; --sand-2:#EDEDED;
-    --gold:#FEEE00; --gold-deep:#E8D900; --teal:#0071CE; --teal-deep:#00509E;
-    --slate:#6B6B6B; --line:#E3E3E3; --white:#FFFFFF; --danger:#E2231A; --ok:#0E8A3E;
-    --radius:10px; --shadow:0 6px 20px -8px rgba(0,0,0,.15); font-size:16px;
+    --ink:#1B2430; --paper:#F7F5F0; --sand:#EDE6D8; --sand-2:#E1D7C1;
+    --gold:#B9852E; --gold-deep:#8F6620; --teal:#2F6E64; --teal-deep:#1F4B44;
+    --slate:#6B7280; --line:#DBD2BF; --white:#FFFFFF; --danger:#B4442E; --ok:#2F6E64;
+    --radius:14px; --shadow:0 10px 30px -12px rgba(27,36,48,.18); font-size:16px;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -27,22 +27,20 @@
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
   input,textarea,select{font-family:inherit;font-size:14px;color:var(--ink);}
 
-  header.site{position:sticky;top:0;z-index:60;background:#1D1D1B;border-bottom:3px solid var(--gold);}
+  header.site{position:sticky;top:0;z-index:60;background:rgba(247,245,240,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
   .header-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
-  .brand-mark{width:38px;height:38px;border-radius:8px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#1D1D1B;font-family:'El Messiri',serif;font-weight:800;font-size:18px;overflow:hidden;}
+  .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(155deg,var(--teal),var(--teal-deep));display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'El Messiri',serif;font-weight:700;font-size:18px;overflow:hidden;}
   .brand-mark img{width:100%;height:100%;object-fit:cover;}
-  .brand-text h1{font-size:18px;margin:0;line-height:1;color:#fff;}
-  .brand-text span{font-size:11px;color:#B8B8B8;}
+  .brand-text h1{font-size:18px;margin:0;line-height:1;}
+  .brand-text span{font-size:11px;color:var(--slate);}
   .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .btn{padding:11px 18px;border-radius:8px;font-weight:800;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;transition:.15s;}
-  .btn-primary{background:var(--gold);color:#1D1D1B;}
-  .btn-primary:hover{background:var(--gold-deep);}
+  .btn{padding:11px 18px;border-radius:11px;font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;transition:.2s;}
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
   .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
-  .btn-ghost:hover{border-color:var(--gold-deep);}
-  .header-actions .btn-ghost{border-color:#444;color:#fff;}
-  .header-actions .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
-  .btn-gold{background:var(--gold);color:#1D1D1B;}
+  .btn-ghost:hover{border-color:var(--gold);}
+  .btn-gold{background:var(--gold);color:#fff;}
   .btn-gold:hover{background:var(--gold-deep);}
   .btn-danger{background:var(--danger);color:#fff;}
   .btn-sm{padding:8px 13px;font-size:12.5px;border-radius:8px;}
@@ -60,14 +58,13 @@
   .search-box input{border:none;outline:none;background:transparent;width:100%;}
   .chips{display:flex;gap:8px;flex-wrap:wrap;}
   .chip{padding:8px 14px;border-radius:999px;background:var(--white);border:1px solid var(--line);font-size:13px;font-weight:700;color:#4A5261;}
-  .chip.active{background:#1D1D1B;color:#fff;border-color:#1D1D1B;}
+  .chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
   .store-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
   @media(max-width:920px){.store-grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:620px){.store-grid{grid-template-columns:1fr;}}
-  .store-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:none;transition:.15s;}
-  .store-card:hover{box-shadow:var(--shadow);border-color:#d0d0d0;}
-  .store-cover{height:110px;background:var(--sand-2);position:relative;overflow:hidden;}
+  .store-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  .store-cover{height:110px;background:linear-gradient(135deg,var(--sand),var(--sand-2));position:relative;overflow:hidden;}
   .store-cover img{width:100%;height:100%;object-fit:cover;}
   .store-cat{position:absolute;top:10px;left:10px;background:rgba(27,36,48,.82);color:#fff;font-size:11px;padding:5px 10px;border-radius:999px;}
   .store-body{padding:16px;}
@@ -223,13 +220,7 @@
   .chat-bubble.theirs{align-self:flex-end;background:var(--sand);color:var(--ink);border-bottom-right-radius:3px;}
   .chat-time{font-size:10px;opacity:.65;margin-top:3px;}
 
-  .fab-chat{position:fixed;bottom:24px;left:24px;z-index:70;background:var(--gold);color:#1D1D1B;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--shadow);}
-  .notif-dot{position:absolute;top:2px;left:2px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:var(--danger);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;}
-  #bellDropdown{position:fixed;top:66px;left:24px;width:min(320px,90vw);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:120;max-height:60vh;overflow-y:auto;display:none;}
-  #bellDropdown.show{display:block;}
-  #bellDropdown .bell-item{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;}
-  #bellDropdown .bell-item b{display:block;font-size:13.5px;margin-bottom:2px;}
-  #bellDropdown .bell-empty{padding:24px;text-align:center;color:var(--slate);font-size:13px;}
+  .fab-chat{position:fixed;bottom:24px;left:24px;z-index:70;background:var(--gold);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--shadow);}
 </style>
 </head>
 <body>
@@ -245,15 +236,10 @@
 </header>
 
 <button class="fab-chat" id="fabChat" style="display:none;" title="محادثة مع الإدارة">💬</button>
-<div id="bellDropdown"></div>
 
 <!-- ===================== HOME (customer / guest) ===================== -->
 <div class="view active" id="view-home">
   <section class="wrap">
-    <div id="adsStrip" style="display:none;">
-      <div class="section-head"><span class="kicker">📢 إعلانات مميزة</span><h3>وصلنا حديثًا من تجارنا</h3></div>
-      <div class="store-grid" id="adsGrid" style="margin-bottom:8px;"></div>
-    </div>
     <div id="offersStrip" style="display:none;">
       <div class="section-head"><span class="kicker">🔥 عروض اليوم</span><h3>أفضل العروض الآن</h3></div>
       <div class="store-grid" id="offersGrid" style="margin-bottom:8px;"></div>
@@ -319,21 +305,6 @@
       <h4>الطلبات</h4>
       <table><thead><tr><th>رقم الطلب</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th></tr></thead><tbody id="merchantOrdersBody"></tbody></table>
     </div>
-
-    <div class="card">
-      <div class="dash-head"><h4 style="margin:0;">💳 المحفظة والإعلانات المدفوعة</h4>
-        <div class="pill num" id="walletBalancePill">الرصيد: ٠ نقطة</div>
-      </div>
-      <p style="font-size:12.5px;">الإعلان المدفوع يظهر في قسم "إعلانات مميزة" بالصفحة الرئيسية لكل الزوار — وصول أكبر من رفع منتج عادي.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
-        <button class="btn btn-ghost btn-sm" id="requestPointsBtn">طلب نقاط من الإدارة</button>
-        <button class="btn btn-gold btn-sm" id="createAdBtn">+ إنشاء إعلان مدفوع</button>
-      </div>
-      <h4 style="font-size:13.5px;">طلبات النقاط</h4>
-      <table><thead><tr><th>النقاط</th><th>ملاحظة</th><th>الحالة</th></tr></thead><tbody id="walletRequestsBody"></tbody></table>
-      <h4 style="font-size:13.5px;margin-top:18px;">إعلاناتي</h4>
-      <table><thead><tr><th>الإعلان</th><th>التكلفة</th><th>الوصول التقديري</th><th>الحالة</th></tr></thead><tbody id="myAdsBody"></tbody></table>
-    </div>
   </section>
 </div>
 
@@ -375,8 +346,6 @@
       <button data-tab="orders">الطلبات</button>
       <button data-tab="reports">التقارير</button>
       <button data-tab="chats">المحادثات</button>
-      <button data-tab="wallet">المحفظة والإعلانات</button>
-      <button data-tab="products">المنتجات</button>
       <button data-tab="settings">إعدادات الموقع</button>
     </div>
 
@@ -429,28 +398,6 @@
         </div>
         <div class="report-total" id="repTotals"></div>
         <table><thead id="repTableHead"></thead><tbody id="repTableBody"></tbody></table>
-      </div>
-    </div>
-
-    <div id="adminTab-wallet" style="display:none;">
-      <div class="card">
-        <h4>طلبات النقاط من التجار</h4>
-        <table><thead><tr><th>المتجر</th><th>النقاط المطلوبة</th><th>ملاحظة</th><th>الحالة</th><th></th></tr></thead><tbody id="adminWalletRequestsBody"></tbody></table>
-      </div>
-      <div class="card">
-        <div class="dash-head"><h4 style="margin:0;">أرصدة المتاجر</h4></div>
-        <table><thead><tr><th>المتجر</th><th>الرصيد الحالي</th><th>إضافة نقاط</th></tr></thead><tbody id="adminWalletBalancesBody"></tbody></table>
-      </div>
-      <div class="card">
-        <h4>كل الإعلانات المنشورة</h4>
-        <table><thead><tr><th>الإعلان</th><th>المتجر</th><th>التكلفة</th><th></th></tr></thead><tbody id="adminAdsBody"></tbody></table>
-      </div>
-    </div>
-
-    <div id="adminTab-products" style="display:none;">
-      <div class="card">
-        <h4>كل المنتجات (لمراقبة المحتوى)</h4>
-        <table><thead><tr><th>المنتج</th><th>المتجر</th><th>السعر</th><th></th></tr></thead><tbody id="adminProductsBody"></tbody></table>
       </div>
     </div>
 
@@ -638,37 +585,6 @@
   </div>
 </div>
 
-<!-- Create ad modal -->
-<div class="modal-backdrop" id="adBackdrop">
-  <div class="modal-box">
-    <h3>إنشاء إعلان مدفوع</h3>
-    <div class="field"><label>اربط بمنتج موجود (اختياري)</label><select id="adProductSelect"><option value="">— بدون ربط —</option></select></div>
-    <div class="field"><label>عنوان الإعلان</label><input id="adTitle"></div>
-    <div class="field"><label>وصف قصير</label><textarea id="adDesc" rows="2"></textarea></div>
-    <div class="img-upload" style="margin-bottom:14px;align-items:flex-start;">
-      <img class="img-preview" id="adImgPreview" src="" alt="">
-      <div class="upload-choice">
-        <label class="upload-btn">📷 التقاط صورة<input type="file" accept="image/*" capture="environment" id="adImgCameraInput" style="display:none;"></label>
-        <label class="upload-btn">🖼️ من المعرض<input type="file" accept="image/*" id="adImgInput" style="display:none;"></label>
-      </div>
-    </div>
-    <div class="field"><label>عدد النقاط المطلوب إنفاقها (كل نقطة ≈ ٥٠ ظهور)</label><input id="adPoints" type="number" min="1"></div>
-    <div class="form-err" id="adErr"></div>
-    <button class="btn btn-primary" id="adSave" style="width:100%;justify-content:center;">نشر الإعلان</button>
-  </div>
-</div>
-
-<!-- Request points modal -->
-<div class="modal-backdrop" id="pointsBackdrop">
-  <div class="modal-box">
-    <h3>طلب نقاط من الإدارة</h3>
-    <div class="field"><label>عدد النقاط المطلوبة</label><input id="pointsRequested" type="number" min="1"></div>
-    <div class="field"><label>ملاحظة (اختياري)</label><textarea id="pointsNote" rows="2"></textarea></div>
-    <div class="form-err" id="pointsErr"></div>
-    <button class="btn btn-primary" id="pointsSubmit" style="width:100%;justify-content:center;">إرسال الطلب</button>
-  </div>
-</div>
-
 <div id="lightboxBackdrop"><button id="lightboxClose">✕</button><img id="lightboxImg" src="" alt=""></div>
 
 <!-- Chat modal (admin <-> merchant/courier) -->
@@ -691,62 +607,11 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ===================== LEGAL PAGES ===================== -->
-<div class="view" id="view-privacy">
-  <section class="wrap-narrow" style="padding:40px 24px;">
-    <button class="btn btn-ghost btn-sm" data-go="home" style="margin-bottom:20px;">→ رجوع للرئيسية</button>
-    <h3>سياسة الخصوصية</h3>
-    <p>نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. هذه السياسة توضح كيف تُجمع بياناتك وتُستخدم وتُحفظ عند استخدامك لمنصة سوق السودان.</p>
-    <h4>١. البيانات التي نجمعها</h4>
-    <p>الاسم، رقم الهاتف، عنوان التوصيل والموقع الجغرافي (عند تحديده اختياريًا)، بيانات الحساب (اسم المستخدم)، وسجل الطلبات والمحادثات مع الإدارة.</p>
-    <h4>٢. كيف نستخدم بياناتك</h4>
-    <p>لتنفيذ الطلبات وتوصيلها، للتواصل بخصوص حالة الطلب، لتحسين الخدمة، ولأغراض المحاسبة بين الإدارة والتجار والمندوبين.</p>
-    <h4>٣. مشاركة البيانات</h4>
-    <p>لا تتم مشاركة بياناتك مع أي طرف خارجي لأغراض تسويقية. تُشارك بيانات التواصل والعنوان فقط مع التاجر والمندوب المعنيين بتنفيذ طلبك.</p>
-    <h4>٤. أمان البيانات</h4>
-    <p>تُخزَّن البيانات على خوادم مؤمَّنة (Supabase) مع صلاحيات وصول مقيدة حسب دور المستخدم، وكلمات المرور مشفّرة ولا يمكن لأي طرف الاطلاع عليها.</p>
-    <h4>٥. حقوقك</h4>
-    <p>يحق لك طلب حذف حسابك أو بياناتك في أي وقت بالتواصل مع إدارة المنصة عبر المحادثة داخل التطبيق.</p>
-    <h4>٦. التعديلات</h4>
-    <p>قد تُحدَّث هذه السياسة من وقت لآخر، وسيتم إعلامك بأي تغييرات جوهرية.</p>
-  </section>
-</div>
-
-<div class="view" id="view-terms">
-  <section class="wrap-narrow" style="padding:40px 24px;">
-    <button class="btn btn-ghost btn-sm" data-go="home" style="margin-bottom:20px;">→ رجوع للرئيسية</button>
-    <h3>الشروط والأحكام</h3>
-    <h4>١. طبيعة الخدمة</h4>
-    <p>سوق السودان منصة إلكترونية تربط بين تجار محليين وعملاء ومندوبي توصيل في الدمام. المنصة وسيط تقني ولا تتحمل مسؤولية جودة المنتجات المباعة مباشرة من التجار، إلا أنها تسعى لضمان جودة الخدمة عبر آليات المراقبة والتقييم.</p>
-    <h4>٢. الحسابات</h4>
-    <p>حسابات التجار والمندوبين تُنشأ حصريًا من قبل إدارة المنصة، ويلتزم صاحب الحساب بالحفاظ على سرية بيانات الدخول الخاصة به. يجوز للعميل التسوق كضيف أو بإنشاء حساب خاص به.</p>
-    <h4>٣. الدفع والعمولة</h4>
-    <p>الدفع يتم نقدًا عند الاستلام ما لم يُذكر خلاف ذلك. تستحق إدارة المنصة نسبة عمولة من مبيعات كل تاجر حسب الاتفاق المُعلن، وتحتفظ الإدارة بحق إيقاف نشر أي متجر عن التأخر في سداد المستحقات.</p>
-    <h4>٤. حدود النشر والإعلانات</h4>
-    <p>تمنح المنصة التجار حدًا مجانيًا لعدد المنتجات القابلة للنشر، ويلتزم التاجر بالتواصل مع الإدارة لزيادة هذا الحد. الإعلانات المدفوعة تُخصم من رصيد نقاط محفظة التاجر ولا تُسترد بعد النشر.</p>
-    <h4>٥. المحتوى المحظور</h4>
-    <p>يُمنع نشر أي منتج أو صورة أو إعلان يخالف الأنظمة المحلية أو يحتوي على محتوى غير لائق. تحتفظ الإدارة بحق حذف أي منتج أو إعلان أو حساب دون إشعار مسبق في حال المخالفة.</p>
-    <h4>٦. التوصيل والمسؤولية</h4>
-    <p>يلتزم المندوب بتوصيل الطلب للعنوان المحدد. المسافة المعروضة تقديرية، والمنصة غير مسؤولة عن التأخير الناتج عن ظروف خارجة عن الإرادة.</p>
-    <h4>٧. إلغاء الطلبات</h4>
-    <p>يحق للعميل إلغاء الطلب قبل قبوله من المندوب. بعد القبول، يُرجى التواصل مع المتجر مباشرة عبر رقم التواصل الموضح في صفحة المتجر.</p>
-    <h4>٨. التعديلات</h4>
-    <p>تحتفظ إدارة المنصة بحق تعديل هذه الشروط في أي وقت، ويُعد استمرار استخدام المنصة موافقة على أي تعديلات.</p>
-  </section>
-</div>
-
-<footer class="site"><div class="wrap">
-  © 2026 سوق السودان — الدمام، المملكة العربية السعودية
-  <div style="margin-top:8px;display:flex;gap:16px;justify-content:center;">
-    <span data-go="privacy" style="cursor:pointer;text-decoration:underline;">سياسة الخصوصية</span>
-    <span data-go="terms" style="cursor:pointer;text-decoration:underline;">الشروط والأحكام</span>
-  </div>
-</div></footer>
+<footer class="site"><div class="wrap">© 2026 سوق السودان — الدمام، المملكة العربية السعودية</div></footer>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -826,10 +691,6 @@ function switchView(name){
   if(name==="courier") loadCourier();
   if(name==="admin") loadAdmin();
 }
-document.addEventListener("click", (e)=>{
-  const el = e.target.closest("[data-go]");
-  if(el && !el.closest("#headerActions")) switchView(el.dataset.go);
-});
 
 /* ============== HEADER / AUTH STATE ============== */
 function renderHeader(){
@@ -838,14 +699,12 @@ function renderHeader(){
   const fab = document.getElementById("fabChat");
   if(!p){
     el.innerHTML = `
-      <button class="btn btn-ghost btn-sm" id="hBell" style="position:relative;">🔔<span class="notif-dot" id="bellDot" style="display:none;"></span></button>
       <button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>
       <button class="btn btn-ghost btn-sm" id="hRegister">إنشاء حساب</button>
       <button class="btn btn-primary btn-sm" id="hLogin">تسجيل الدخول</button>`;
     document.getElementById("hCart").onclick = openCart;
     document.getElementById("hRegister").onclick = ()=>openModal("registerBackdrop");
     document.getElementById("hLogin").onclick = ()=>openModal("loginBackdrop");
-    document.getElementById("hBell").onclick = openBell;
     fab.style.display = "none";
   } else {
     let dashBtn = "";
@@ -854,19 +713,15 @@ function renderHeader(){
     if(p.role==="admin") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="admin">لوحة الإدارة</button>`;
     let cartBtn = p.role==="customer" ? `<button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>` : "";
     let homeBtn = `<button class="btn home-link-btn btn-sm" data-go="home">🛍️ تصفح المتاجر</button>`;
-    let bellBtn = `<button class="btn btn-ghost btn-sm" id="hBell" style="position:relative;">🔔<span class="notif-dot" id="bellDot" style="display:none;"></span></button>`;
-    el.innerHTML = `${homeBtn}${bellBtn}${cartBtn}${dashBtn}
+    el.innerHTML = `${homeBtn}${cartBtn}${dashBtn}
       <span class="pill">👋 ${esc(p.full_name)}</span>
       <button class="btn btn-ghost btn-sm" id="hLogout">خروج</button>`;
     if(document.getElementById("hCart")) document.getElementById("hCart").onclick = openCart;
-    document.getElementById("hBell").onclick = openBell;
     document.getElementById("hLogout").onclick = doLogout;
     el.querySelectorAll("[data-go]").forEach(b=> b.onclick = ()=>switchView(b.dataset.go));
     if(p.role==="merchant" || p.role==="courier"){
       fab.style.display = "flex";
-      fab.innerHTML = `💬<span class="notif-dot" id="chatFabDot" style="display:none;"></span>`;
       fab.onclick = ()=> openChat(p.id, "محادثة مع إدارة المنصة", false);
-      refreshChatBadge();
     } else {
       fab.style.display = "none";
     }
@@ -885,13 +740,11 @@ async function refreshAuth(){
     state.profile = null;
   }
   renderHeader();
-  startGlobalChatListener();
 }
 
 async function doLogout(){
   await sb.auth.signOut();
   state.profile = null;
-  if(globalChatChannel){ sb.removeChannel(globalChatChannel); globalChatChannel=null; }
   renderHeader();
   switchView("home");
 }
@@ -1029,49 +882,7 @@ async function loadStores(){
   renderCatChips();
   renderStores();
   renderOffers();
-  renderAds();
 }
-async function renderAds(){
-  const {data} = await sb.from("ads").select("*, stores(name)").eq("status","active").order("created_at",{ascending:false}).limit(6);
-  const strip = document.getElementById("adsStrip");
-  const grid = document.getElementById("adsGrid");
-  if(!data || data.length===0){ strip.style.display="none"; return; }
-  strip.style.display = "block";
-  grid.innerHTML = "";
-  data.forEach(ad=>{
-    const card = document.createElement("div");
-    card.className = "store-card";
-    card.innerHTML = `
-      <div class="store-cover">${ad.image_url?`<img class="zoomable" src="${esc(ad.image_url)}">`:""}<span class="store-cat" style="background:var(--gold);color:#1D1D1B;">إعلان</span></div>
-      <div class="store-body">
-        <h4>${esc(ad.title)}</h4>
-        <div class="store-meta"><span>${esc(ad.stores?.name||"")}</span></div>
-        <p>${esc(ad.description||"")}</p>
-        <button class="btn btn-gold btn-sm" data-open-store-ad="${ad.store_id}">عرض المتجر</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-  grid.querySelectorAll("[data-open-store-ad]").forEach(b=> b.onclick = async ()=>{
-    if(!state.stores.find(s=>s.id===b.dataset.openStoreAd)) await loadStores();
-    openStorePanel(b.dataset.openStoreAd);
-  });
-}
-
-/* ============== NOTIFICATION BELL ============== */
-async function openBell(){
-  const dd = document.getElementById("bellDropdown");
-  if(dd.classList.contains("show")){ dd.classList.remove("show"); return; }
-  const {data} = await sb.from("ads").select("title, description, created_at, stores(name)").eq("status","active").order("created_at",{ascending:false}).limit(8);
-  dd.innerHTML = (!data || data.length===0)
-    ? '<div class="bell-empty">لا توجد إشعارات أو إعلانات جديدة حاليًا.</div>'
-    : data.map(a=>`<div class="bell-item"><b>📢 ${esc(a.title)}</b>${esc(a.stores?.name||"")} — ${new Date(a.created_at).toLocaleDateString("ar-SA")}</div>`).join("");
-  dd.classList.add("show");
-  document.getElementById("bellDot").style.display = "none";
-}
-document.addEventListener("click", (e)=>{
-  const dd = document.getElementById("bellDropdown");
-  if(dd.classList.contains("show") && !e.target.closest("#bellDropdown") && !e.target.closest("#hBell")) dd.classList.remove("show");
-});
 function renderOffers(){
   const strip = document.getElementById("offersStrip");
   const grid = document.getElementById("offersGrid");
@@ -1338,89 +1149,7 @@ async function loadMerchant(){
   }
   renderMerchantProducts();
   await renderMerchantOrders();
-  await renderWallet();
 }
-
-async function renderWallet(){
-  document.getElementById("walletBalancePill").textContent = `الرصيد: ${state.myStore.wallet_points.toLocaleString("ar-SA")} نقطة`;
-
-  const {data: reqs} = await sb.from("wallet_requests").select("*").eq("store_id", state.myStore.id).order("created_at",{ascending:false});
-  const reqBody = document.getElementById("walletRequestsBody");
-  reqBody.innerHTML = (reqs&&reqs.length) ? "" : '<tr class="empty-row"><td colspan="3">لا توجد طلبات نقاط بعد.</td></tr>';
-  (reqs||[]).forEach(r=>{
-    const statusLabel = {pending:'<span class="badge new">قيد المراجعة</span>', approved:'<span class="badge done">تمت الموافقة</span>', rejected:'<span class="badge">مرفوض</span>'}[r.status];
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td class="num" data-label="النقاط">${r.points_requested}</td><td data-label="ملاحظة">${esc(r.note||"—")}</td><td data-label="الحالة">${statusLabel}</td>`;
-    reqBody.appendChild(tr);
-  });
-
-  const {data: ads} = await sb.from("ads").select("*").eq("store_id", state.myStore.id).order("created_at",{ascending:false});
-  const adsBody = document.getElementById("myAdsBody");
-  adsBody.innerHTML = (ads&&ads.length) ? "" : '<tr class="empty-row"><td colspan="4">لا توجد إعلانات بعد.</td></tr>';
-  (ads||[]).forEach(a=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="الإعلان">${esc(a.title)}</td><td class="num" data-label="التكلفة">${a.points_cost} نقطة</td><td class="num" data-label="الوصول التقديري">${a.reach_estimate.toLocaleString("ar-SA")}</td><td data-label="الحالة"><span class="badge ${a.status==='active'?'done':''}">${a.status==='active'?'نشط':(a.status==='removed'?'محذوف':'منتهي')}</span></td>`;
-    adsBody.appendChild(tr);
-  });
-
-  const prodSelect = document.getElementById("adProductSelect");
-  prodSelect.innerHTML = `<option value="">— بدون ربط —</option>` + (state.myStore.products||[]).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
-}
-
-document.getElementById("requestPointsBtn").onclick = ()=>{
-  document.getElementById("pointsRequested").value = "";
-  document.getElementById("pointsNote").value = "";
-  document.getElementById("pointsErr").textContent = "";
-  openModal("pointsBackdrop");
-};
-document.getElementById("pointsSubmit").onclick = async ()=>{
-  const points_requested = parseInt(document.getElementById("pointsRequested").value);
-  const note = document.getElementById("pointsNote").value.trim();
-  const errEl = document.getElementById("pointsErr");
-  if(!points_requested || points_requested<=0){ errEl.textContent = "أدخل عدد نقاط صحيح"; return; }
-  const {error} = await sb.from("wallet_requests").insert({store_id: state.myStore.id, points_requested, note});
-  if(error){ errEl.textContent = "تعذر إرسال الطلب"; return; }
-  closeModal("pointsBackdrop");
-  toast("تم إرسال طلب النقاط للإدارة");
-  renderWallet();
-};
-
-document.getElementById("createAdBtn").onclick = ()=>{
-  document.getElementById("adTitle").value = "";
-  document.getElementById("adDesc").value = "";
-  document.getElementById("adPoints").value = "";
-  document.getElementById("adImgPreview").src = "";
-  document.getElementById("adErr").textContent = "";
-  state.adImageFile = null;
-  openModal("adBackdrop");
-};
-function handleAdImgFile(file){
-  if(!file) return;
-  state.adImageFile = file;
-  document.getElementById("adImgPreview").src = URL.createObjectURL(file);
-}
-document.getElementById("adImgInput").addEventListener("change", e=> handleAdImgFile(e.target.files[0]));
-document.getElementById("adImgCameraInput").addEventListener("change", e=> handleAdImgFile(e.target.files[0]));
-document.getElementById("adSave").onclick = async ()=>{
-  const title = document.getElementById("adTitle").value.trim();
-  const description = document.getElementById("adDesc").value.trim();
-  const points_cost = parseInt(document.getElementById("adPoints").value);
-  const product_id = document.getElementById("adProductSelect").value || null;
-  const errEl = document.getElementById("adErr");
-  if(!title || !points_cost || points_cost<=0){ errEl.textContent = "أدخل عنوانًا وعدد نقاط صحيح"; return; }
-  if(points_cost > state.myStore.wallet_points){ errEl.textContent = `رصيدك الحالي ${state.myStore.wallet_points} نقطة فقط. اطلب نقاطًا إضافية من الإدارة.`; return; }
-  try{
-    let image_url = null;
-    if(state.adImageFile) image_url = await uploadImage(state.adImageFile, "product-images", state.myStore.id + "/ads");
-    const {error} = await sb.from("ads").insert({store_id: state.myStore.id, product_id, title, description, image_url, points_cost});
-    if(error) throw error;
-    closeModal("adBackdrop");
-    toast("تم نشر الإعلان بنجاح 🎉");
-    await loadMerchant();
-  }catch(e){
-    errEl.textContent = (e.message||"").includes("INSUFFICIENT_POINTS") ? "رصيدك من النقاط غير كافٍ." : "تعذر نشر الإعلان";
-  }
-};
 async function handleStoreLogoFile(file){
   if(!file) return;
   try{
@@ -1648,11 +1377,9 @@ async function loadCourier(){
 document.getElementById("adminTabs").querySelectorAll("button").forEach(b=>{
   b.addEventListener("click", ()=>{
     document.getElementById("adminTabs").querySelectorAll("button").forEach(x=>x.classList.toggle("active", x===b));
-    ["users","stores","orders","reports","chats","wallet","products","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
+    ["users","stores","orders","reports","chats","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
     if(b.dataset.tab==="reports") populateReportEntities();
     if(b.dataset.tab==="chats") loadAdminChats();
-    if(b.dataset.tab==="wallet") loadAdminWallet();
-    if(b.dataset.tab==="products") loadAdminProducts();
   });
 });
 document.getElementById("purgeOrdersBtn").onclick = async ()=>{
@@ -1664,100 +1391,6 @@ document.getElementById("purgeOrdersBtn").onclick = async ()=>{
   toast("تم حذف الطلبات القديمة");
   loadAdmin();
 };
-
-/* ---- Admin: wallet & ads moderation ---- */
-async function loadAdminWallet(){
-  const {data: reqs} = await sb.from("wallet_requests").select("*, stores(name)").order("created_at",{ascending:false});
-  const rb = document.getElementById("adminWalletRequestsBody");
-  rb.innerHTML = (reqs&&reqs.length) ? "" : '<tr class="empty-row"><td colspan="5">لا توجد طلبات نقاط.</td></tr>';
-  (reqs||[]).forEach(r=>{
-    const statusLabel = {pending:'<span class="badge new">قيد المراجعة</span>', approved:'<span class="badge done">تمت الموافقة</span>', rejected:'<span class="badge">مرفوض</span>'}[r.status];
-    const tr = document.createElement("tr");
-    const actions = r.status==="pending" ? `<button class="mini-btn" data-approve="${r.id}" data-store="${r.store_id}" data-points="${r.points_requested}">موافقة</button> <button class="mini-btn ghost" data-reject="${r.id}">رفض</button>` : "—";
-    tr.innerHTML = `<td data-label="المتجر">${esc(r.stores?.name||"—")}</td><td class="num" data-label="النقاط">${r.points_requested}</td><td data-label="ملاحظة">${esc(r.note||"—")}</td><td data-label="الحالة">${statusLabel}</td><td data-label="">${actions}</td>`;
-    rb.appendChild(tr);
-  });
-  rb.querySelectorAll("[data-approve]").forEach(b=>{
-    b.onclick = async ()=>{
-      const points = parseInt(b.dataset.points);
-      const {data: s} = await sb.from("stores").select("wallet_points").eq("id", b.dataset.store).single();
-      await sb.from("stores").update({wallet_points:(s.wallet_points||0)+points}).eq("id", b.dataset.store);
-      await sb.from("wallet_requests").update({status:"approved", decided_at:new Date().toISOString()}).eq("id", b.dataset.approve);
-      toast("تمت الموافقة وإضافة النقاط");
-      loadAdminWallet();
-    };
-  });
-  rb.querySelectorAll("[data-reject]").forEach(b=>{
-    b.onclick = async ()=>{
-      await sb.from("wallet_requests").update({status:"rejected", decided_at:new Date().toISOString()}).eq("id", b.dataset.reject);
-      toast("تم رفض الطلب");
-      loadAdminWallet();
-    };
-  });
-
-  const {data: stores} = await sb.from("stores").select("id,name,wallet_points").order("name");
-  const bb = document.getElementById("adminWalletBalancesBody");
-  bb.innerHTML = (stores&&stores.length) ? "" : '<tr class="empty-row"><td colspan="3">لا توجد متاجر.</td></tr>';
-  (stores||[]).forEach(s=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="المتجر">${esc(s.name)}</td><td class="num" data-label="الرصيد">${s.wallet_points}</td>
-      <td data-label="إضافة"><input class="price-input num" type="number" placeholder="عدد" style="width:70px;" data-addpoints="${s.id}"><button class="mini-btn" data-addbtn="${s.id}">إضافة</button></td>`;
-    bb.appendChild(tr);
-  });
-  bb.querySelectorAll("[data-addbtn]").forEach(b=>{
-    b.onclick = async ()=>{
-      const input = bb.querySelector(`[data-addpoints="${b.dataset.addbtn}"]`);
-      const v = parseInt(input.value)||0;
-      if(v<=0) return;
-      const {data: s} = await sb.from("stores").select("wallet_points").eq("id", b.dataset.addbtn).single();
-      await sb.from("stores").update({wallet_points:(s.wallet_points||0)+v}).eq("id", b.dataset.addbtn);
-      toast("تمت إضافة النقاط");
-      input.value = "";
-      loadAdminWallet();
-    };
-  });
-
-  const {data: ads} = await sb.from("ads").select("*, stores(name)").order("created_at",{ascending:false});
-  const ab = document.getElementById("adminAdsBody");
-  ab.innerHTML = (ads&&ads.length) ? "" : '<tr class="empty-row"><td colspan="4">لا توجد إعلانات.</td></tr>';
-  (ads||[]).forEach(a=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="الإعلان">${esc(a.title)}</td><td data-label="المتجر">${esc(a.stores?.name||"—")}</td><td class="num" data-label="التكلفة">${a.points_cost}</td>
-      <td data-label=""><button class="mini-btn ghost" data-deladmin="${a.id}">حذف</button></td>`;
-    ab.appendChild(tr);
-  });
-  ab.querySelectorAll("[data-deladmin]").forEach(b=>{
-    b.onclick = async ()=>{
-      if(!confirm("حذف هذا الإعلان نهائيًا؟")) return;
-      await sb.from("ads").delete().eq("id", b.dataset.deladmin);
-      toast("تم حذف الإعلان");
-      loadAdminWallet();
-    };
-  });
-}
-
-async function loadAdminProducts(){
-  const {data: products} = await sb.from("products").select("*, stores(name)").order("created_at",{ascending:false});
-  const body = document.getElementById("adminProductsBody");
-  body.innerHTML = (products&&products.length) ? "" : '<tr class="empty-row"><td colspan="4">لا توجد منتجات.</td></tr>';
-  (products||[]).forEach(p=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="المنتج" style="display:flex;align-items:center;gap:8px;">
-        <div class="product-thumb" style="width:34px;height:34px;">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>${esc(p.name)}</td>
-      <td data-label="المتجر">${esc(p.stores?.name||"—")}</td><td class="num" data-label="السعر">${sar(p.price)}</td>
-      <td data-label=""><button class="mini-btn ghost" data-deladminprod="${p.id}">حذف</button></td>`;
-    body.appendChild(tr);
-  });
-  body.querySelectorAll("[data-deladminprod]").forEach(b=>{
-    b.onclick = async ()=>{
-      if(!confirm("حذف هذا المنتج نهائيًا من المنصة؟")) return;
-      const {error} = await sb.from("products").delete().eq("id", b.dataset.deladminprod);
-      if(error){ toast("تعذر الحذف: "+error.message); return; }
-      toast("تم حذف المنتج");
-      loadAdminProducts();
-    };
-  });
-}
 
 /* ---- Reports ---- */
 async function populateReportEntities(){
@@ -1962,7 +1595,6 @@ function applyBrand(logoUrl, name){
 
 /* ============== CHAT ============== */
 let chatChannel = null;
-let globalChatChannel = null;
 let chatState = {participantId:null, participantName:""};
 function roleArabic(r){ return {admin:"إدارة", merchant:"تاجر", courier:"مندوب", customer:"عميل"}[r]||r; }
 
@@ -1972,16 +1604,10 @@ async function openChat(participantId, title, showDelete){
   document.getElementById("chatDeleteBtn").style.display = showDelete ? "inline-flex" : "none";
   openModal("chatBackdrop");
   await loadChatMessages();
-  await markThreadRead(participantId);
   if(chatChannel) sb.removeChannel(chatChannel);
   chatChannel = sb.channel("messages-"+participantId)
-    .on("postgres_changes", {event:"*", schema:"public", table:"messages", filter:`participant_id=eq.${participantId}`}, ()=>{ loadChatMessages(); markThreadRead(participantId); })
+    .on("postgres_changes", {event:"*", schema:"public", table:"messages", filter:`participant_id=eq.${participantId}`}, ()=> loadChatMessages())
     .subscribe();
-}
-async function markThreadRead(participantId){
-  const myId = state.session?.user?.id;
-  await sb.from("messages").update({read:true}).eq("participant_id", participantId).neq("sender_id", myId).eq("read", false);
-  refreshChatBadge();
 }
 async function loadChatMessages(){
   const {data} = await sb.from("messages").select("*").eq("participant_id", chatState.participantId).order("created_at");
@@ -2016,43 +1642,6 @@ document.getElementById("chatDeleteBtn").onclick = async ()=>{
   await loadChatMessages();
   toast("تم حذف المحادثة");
 };
-
-/* unread badge + sound, listening globally regardless of which view is open */
-async function refreshChatBadge(){
-  const myId = state.session?.user?.id;
-  if(!myId || !state.profile) return;
-  let count = 0;
-  if(state.profile.role==="merchant" || state.profile.role==="courier"){
-    const {count:c} = await sb.from("messages").select("id",{count:"exact",head:true}).eq("participant_id", myId).eq("read", false).neq("sender_id", myId);
-    count = c||0;
-    const dot = document.getElementById("chatFabDot");
-    if(dot){ dot.style.display = count>0 ? "flex":"none"; dot.textContent = count>9?"9+":count; }
-  } else if(state.profile.role==="admin"){
-    const {count:c} = await sb.from("messages").select("id",{count:"exact",head:true}).eq("read", false).neq("sender_id", myId);
-    count = c||0;
-    const chatsTabBtn = document.querySelector('#adminTabs [data-tab="chats"]');
-    if(chatsTabBtn) chatsTabBtn.textContent = count>0 ? `المحادثات (${count})` : "المحادثات";
-  }
-}
-function startGlobalChatListener(){
-  if(globalChatChannel) sb.removeChannel(globalChatChannel);
-  const myId = state.session?.user?.id;
-  if(!myId || !state.profile) return;
-  if(!["merchant","courier","admin"].includes(state.profile.role)) return;
-  const filter = state.profile.role==="admin" ? undefined : `participant_id=eq.${myId}`;
-  const cfg = {event:"INSERT", schema:"public", table:"messages"};
-  if(filter) cfg.filter = filter;
-  globalChatChannel = sb.channel("global-messages-"+myId)
-    .on("postgres_changes", cfg, (payload)=>{
-      if(payload.new.sender_id !== myId){
-        playNotifySound();
-        if(!document.getElementById("chatBackdrop").classList.contains("show")) toast("💬 رسالة جديدة");
-        refreshChatBadge();
-      }
-    })
-    .subscribe();
-  refreshChatBadge();
-}
 
 async function loadAdminChats(){
   const {data: people} = await sb.from("profiles").select("*").in("role", ["merchant","courier"]).order("full_name");
@@ -2093,47 +1682,21 @@ function haversineKm(lat1,lng1,lat2,lng2){
 async function downloadOrderPdf(orderId){
   const {data:o} = await sb.from("orders").select("*, stores(name,phone,address,lat,lng), order_items(*)").eq("id", orderId).single();
   if(!o){ toast("تعذر تحميل بيانات الطلب"); return; }
-  toast("جاري تجهيز ملف PDF...");
-  const itemsHtml = (o.order_items||[]).map(it=>
-    `<tr><td style="padding:6px 4px;border-bottom:1px solid #eee;">${esc(it.name)}</td><td style="padding:6px 4px;border-bottom:1px solid #eee;text-align:center;">${it.qty}</td><td style="padding:6px 4px;border-bottom:1px solid #eee;text-align:left;">${sar(it.price*it.qty)}</td></tr>`
-  ).join("");
-  const mapsLine = o.lat ? `<div style="margin-top:4px;">موقع العميل: https://www.google.com/maps?q=${o.lat},${o.lng}</div>` : "";
-  const wrap = document.createElement("div");
-  wrap.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:560px;background:#fff;padding:28px;font-family:'Almarai',sans-serif;direction:rtl;color:#1D1D1B;";
-  wrap.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #FEEE00;padding-bottom:12px;margin-bottom:16px;">
-      <div style="font-size:20px;font-weight:800;">إيصال طلب</div>
-      <div style="font-size:16px;font-weight:800;">${esc(o.order_code)}</div>
-    </div>
-    <div style="font-size:13px;line-height:1.9;margin-bottom:14px;">
-      <div><b>المتجر:</b> ${esc(o.stores?.name||"—")} — ${esc(o.stores?.phone||"—")}</div>
-      <div><b>العميل:</b> ${esc(o.guest_name||"—")} — ${esc(o.guest_phone||"—")}</div>
-      <div><b>العنوان:</b> ${esc(o.address||"—")}</div>
-      ${mapsLine}
-      ${o.note ? `<div><b>ملاحظة:</b> ${esc(o.note)}</div>` : ""}
-    </div>
-    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;">
-      <thead><tr style="background:#F7F7F7;"><th style="padding:6px 4px;text-align:right;">المنتج</th><th style="padding:6px 4px;">الكمية</th><th style="padding:6px 4px;text-align:left;">السعر</th></tr></thead>
-      <tbody>${itemsHtml}</tbody>
-    </table>
-    <div style="font-size:13.5px;text-align:left;line-height:1.9;">
-      <div>المنتجات: ${sar(o.subtotal)}</div>
-      <div>التوصيل: ${sar(o.delivery_fee)}</div>
-      <div style="font-weight:800;font-size:15px;">الإجمالي: ${sar(o.total)}</div>
-    </div>`;
-  document.body.appendChild(wrap);
-  try{
-    const canvas = await html2canvas(wrap, {scale:2, backgroundColor:"#ffffff"});
-    const imgData = canvas.toDataURL("image/png");
-    const {jsPDF} = window.jspdf;
-    const pdf = new jsPDF({unit:"pt", format:"a4"});
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgWidth = pageWidth - 40;
-    const imgHeight = canvas.height * (imgWidth / canvas.width);
-    pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
-    pdf.save(`${o.order_code}.pdf`);
-  }catch(e){ toast("تعذر إنشاء ملف PDF"); }
-  finally{ document.body.removeChild(wrap); }
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(16); doc.text(`Order ${o.order_code}`, 14, 18);
+  doc.setFontSize(11);
+  let y = 30;
+  const line = (t)=>{ doc.text(t, 14, y); y += 8; };
+  line(`Store: ${o.stores?.name||"-"}  Tel: ${o.stores?.phone||"-"}`);
+  line(`Customer: ${o.guest_name||"-"}  Tel: ${o.guest_phone||"-"}`);
+  line(`Address: ${(o.address||"-").slice(0,70)}`);
+  if(o.lat) line(`Location: https://www.google.com/maps?q=${o.lat},${o.lng}`);
+  line(`Note: ${o.note||"-"}`);
+  y += 2; doc.setFontSize(12); line("Items:"); doc.setFontSize(11);
+  (o.order_items||[]).forEach(it=> line(`- ${it.name} x${it.qty}  =  ${it.price*it.qty} SAR`));
+  y += 2; line(`Subtotal: ${o.subtotal} SAR`); line(`Delivery: ${o.delivery_fee} SAR`); line(`Total: ${o.total} SAR`);
+  doc.save(`${o.order_code}.pdf`);
 }
 
 /* ============== NEW ORDER SOUND NOTIFICATION (courier) ============== */
