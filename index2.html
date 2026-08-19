@@ -211,16 +211,6 @@
     .empty-row{border:none !important;}
     .report-controls{flex-direction:column;align-items:stretch;}
   }
-
-  .offer-badge{position:absolute;top:10px;right:10px;background:var(--danger);color:#fff;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;}
-  .price-old{color:var(--slate);text-decoration:line-through;font-size:11.5px;margin-left:6px;}
-
-  .chat-bubble{max-width:80%;padding:9px 13px;border-radius:12px;font-size:13.5px;line-height:1.5;}
-  .chat-bubble.mine{align-self:flex-start;background:var(--ink);color:#fff;border-bottom-left-radius:3px;}
-  .chat-bubble.theirs{align-self:flex-end;background:var(--sand);color:var(--ink);border-bottom-right-radius:3px;}
-  .chat-time{font-size:10px;opacity:.65;margin-top:3px;}
-
-  .fab-chat{position:fixed;bottom:24px;left:24px;z-index:70;background:var(--gold);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--shadow);}
 </style>
 </head>
 <body>
@@ -235,15 +225,9 @@
   </div>
 </header>
 
-<button class="fab-chat" id="fabChat" style="display:none;" title="محادثة مع الإدارة">💬</button>
-
 <!-- ===================== HOME (customer / guest) ===================== -->
 <div class="view active" id="view-home">
   <section class="wrap">
-    <div id="offersStrip" style="display:none;">
-      <div class="section-head"><span class="kicker">🔥 عروض اليوم</span><h3>أفضل العروض الآن</h3></div>
-      <div class="store-grid" id="offersGrid" style="margin-bottom:8px;"></div>
-    </div>
     <div class="directory-tools">
       <div class="search-box">🔎<input id="storeSearch" placeholder="ابحث عن متجر أو منتج..."></div>
       <div class="chips" id="catChips"></div>
@@ -275,7 +259,7 @@
       </div>
       <div class="field-row">
         <div class="field"><label>اسم المتجر</label><input id="sfName"></div>
-        <div class="field"><label>التصنيف</label><input id="sfCategory" list="categoryList" placeholder="اختر أو اكتب تصنيفًا جديدًا"><datalist id="categoryList"></datalist></div>
+        <div class="field"><label>التصنيف</label><input id="sfCategory" placeholder="أطعمة / بهارات / ملابس..."></div>
       </div>
       <div class="field-row">
         <div class="field"><label>الحي</label><input id="sfArea"></div>
@@ -296,9 +280,8 @@
 
     <div class="card">
       <h4>المنتجات</h4>
-      <div class="pill" id="productLimitBanner" style="margin-bottom:10px;"></div><br>
       <button class="btn btn-gold btn-sm" id="addProductBtn" style="margin-bottom:14px;">+ إضافة منتج</button>
-      <table><thead><tr><th>المنتج</th><th>السعر</th><th>عرض</th><th>الحالة</th><th></th></tr></thead><tbody id="merchantProductsBody"></tbody></table>
+      <table><thead><tr><th>المنتج</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody id="merchantProductsBody"></tbody></table>
     </div>
 
     <div class="card">
@@ -345,7 +328,6 @@
       <button data-tab="stores">المتاجر</button>
       <button data-tab="orders">الطلبات</button>
       <button data-tab="reports">التقارير</button>
-      <button data-tab="chats">المحادثات</button>
       <button data-tab="settings">إعدادات الموقع</button>
     </div>
 
@@ -354,33 +336,21 @@
         <div class="dash-head"><h4 style="margin:0;">حسابات المستخدمين (تاجر / مندوب / إدارة)</h4>
           <button class="btn btn-gold btn-sm" id="openCreateUser">+ إنشاء حساب جديد</button>
         </div>
-        <table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الدور</th><th>الهاتف</th><th>الحد</th><th></th></tr></thead><tbody id="adminUsersBody"></tbody></table>
+        <table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الدور</th><th>الهاتف</th><th></th></tr></thead><tbody id="adminUsersBody"></tbody></table>
       </div>
     </div>
 
     <div id="adminTab-stores" style="display:none;">
       <div class="card">
         <h4>المتاجر</h4>
-        <table><thead><tr><th>المتجر</th><th>التاجر</th><th>المبيعات</th><th>العمولة</th><th>حد المنتجات</th><th>النشر</th></tr></thead><tbody id="adminStoresBody"></tbody></table>
+        <table><thead><tr><th>المتجر</th><th>التاجر</th><th>المبيعات</th><th>العمولة</th><th>الحالة</th></tr></thead><tbody id="adminStoresBody"></tbody></table>
       </div>
     </div>
 
     <div id="adminTab-orders" style="display:none;">
       <div class="card">
-        <div class="dash-head"><h4 style="margin:0;">كل الطلبات</h4>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <input type="date" id="purgeBeforeDate" style="padding:9px 10px;border:1px solid var(--line);border-radius:8px;">
-            <button class="btn btn-danger btn-sm" id="purgeOrdersBtn">حذف الطلبات الأقدم من هذا التاريخ</button>
-          </div>
-        </div>
+        <h4>كل الطلبات</h4>
         <table><thead><tr><th>رقم الطلب</th><th>المتجر</th><th>الإجمالي</th><th>المسار</th></tr></thead><tbody id="adminOrdersBody"></tbody></table>
-      </div>
-    </div>
-
-    <div id="adminTab-chats" style="display:none;">
-      <div class="card">
-        <h4>محادثات مع التجار والمندوبين</h4>
-        <table><thead><tr><th>الاسم</th><th>الدور</th><th>آخر رسالة</th><th></th></tr></thead><tbody id="adminChatsBody"></tbody></table>
       </div>
     </div>
 
@@ -557,10 +527,6 @@
     <div class="field"><label>اسم المنتج</label><input id="prName"></div>
     <div class="field"><label>الوصف</label><textarea id="prDesc" rows="2"></textarea></div>
     <div class="field"><label>السعر (ر.س)</label><input id="prPrice" type="number" min="0" step="0.5"></div>
-    <div class="field-row">
-      <div class="field"><label>عرض خاص؟</label><span class="switch" id="prOfferSwitch" style="margin-top:6px;"></span></div>
-      <div class="field" id="prDiscountWrap" style="display:none;"><label>السعر بعد الخصم</label><input id="prDiscountPrice" type="number" min="0" step="0.5"></div>
-    </div>
     <div class="form-err" id="prErr"></div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-ghost" id="prCancel" style="flex:1;justify-content:center;">إلغاء</button>
@@ -587,31 +553,12 @@
 
 <div id="lightboxBackdrop"><button id="lightboxClose">✕</button><img id="lightboxImg" src="" alt=""></div>
 
-<!-- Chat modal (admin <-> merchant/courier) -->
-<div class="modal-backdrop" id="chatBackdrop">
-  <div class="modal-box wide" style="display:flex;flex-direction:column;height:78vh;padding:0;overflow:hidden;">
-    <div class="panel-head">
-      <h3 id="chatTitle" style="font-size:15px;">محادثة</h3>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="mini-btn ghost" id="chatDeleteBtn" style="display:none;">حذف المحادثة</button>
-        <button class="close-x" id="chatClose">✕</button>
-      </div>
-    </div>
-    <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:8px;"></div>
-    <div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);">
-      <input id="chatInput" placeholder="اكتب رسالتك..." style="flex:1;padding:11px 13px;border:1px solid var(--line);border-radius:9px;">
-      <button class="btn btn-primary btn-sm" id="chatSend">إرسال</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <footer class="site"><div class="wrap">© 2026 سوق السودان — الدمام، المملكة العربية السعودية</div></footer>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -624,14 +571,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function callFunction(name, body, useAuth){
   const headers = {"Content-Type":"application/json", "apikey": SUPABASE_ANON_KEY};
-  let token = SUPABASE_ANON_KEY;
-  if(useAuth){
-    const {data:{session}} = await sb.auth.getSession(); // always fetch the current, auto-refreshed session
-    if(!session){ throw new Error("انتهت جلسة الدخول، سجّل الدخول من جديد"); }
-    token = session.access_token;
-    state.session = session;
-  }
-  headers["Authorization"] = `Bearer ${token}`;
+  headers["Authorization"] = useAuth && state.session ? `Bearer ${state.session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`;
   const res = await fetch(`${FUNCTIONS_URL}/${name}`, { method:"POST", headers, body: JSON.stringify(body) });
   let data;
   try{ data = await res.json(); }catch(e){ data = {error:"استجابة غير صالحة من الخادم"}; }
@@ -696,7 +636,6 @@ function switchView(name){
 function renderHeader(){
   const el = document.getElementById("headerActions");
   const p = state.profile;
-  const fab = document.getElementById("fabChat");
   if(!p){
     el.innerHTML = `
       <button class="btn btn-ghost btn-sm" id="hCart">🛒 السلة <span id="cartCount">٠</span></button>
@@ -705,7 +644,6 @@ function renderHeader(){
     document.getElementById("hCart").onclick = openCart;
     document.getElementById("hRegister").onclick = ()=>openModal("registerBackdrop");
     document.getElementById("hLogin").onclick = ()=>openModal("loginBackdrop");
-    fab.style.display = "none";
   } else {
     let dashBtn = "";
     if(p.role==="merchant") dashBtn = `<button class="btn btn-ghost btn-sm" data-go="merchant">لوحة التاجر</button>`;
@@ -719,12 +657,6 @@ function renderHeader(){
     if(document.getElementById("hCart")) document.getElementById("hCart").onclick = openCart;
     document.getElementById("hLogout").onclick = doLogout;
     el.querySelectorAll("[data-go]").forEach(b=> b.onclick = ()=>switchView(b.dataset.go));
-    if(p.role==="merchant" || p.role==="courier"){
-      fab.style.display = "flex";
-      fab.onclick = ()=> openChat(p.id, "محادثة مع إدارة المنصة", false);
-    } else {
-      fab.style.display = "none";
-    }
   }
   document.querySelectorAll(".brand[data-go]").forEach(b=> b.onclick = ()=>switchView("home"));
   updateCartCount();
@@ -876,37 +808,11 @@ document.getElementById("sfPickLocation").onclick = ()=> openMapPicker("store", 
 
 /* ============== STORE DIRECTORY (home) ============== */
 async function loadStores(){
-  const {data, error} = await sb.from("stores").select("*, products(id, name, price, image_url, active, is_offer, discount_price)").eq("active", true).order("created_at");
+  const {data, error} = await sb.from("stores").select("*, products(id, name, price, image_url, active)").eq("active", true).order("created_at");
   if(error){ console.error(error); return; }
   state.stores = data || [];
   renderCatChips();
   renderStores();
-  renderOffers();
-}
-function renderOffers(){
-  const strip = document.getElementById("offersStrip");
-  const grid = document.getElementById("offersGrid");
-  const offers = [];
-  state.stores.forEach(s=>{
-    (s.products||[]).filter(p=>p.active && p.is_offer && p.discount_price!=null).forEach(p=> offers.push({p, store:s}));
-  });
-  if(offers.length===0){ strip.style.display = "none"; return; }
-  strip.style.display = "block";
-  grid.innerHTML = "";
-  offers.slice(0,6).forEach(({p, store})=>{
-    const card = document.createElement("div");
-    card.className = "store-card";
-    card.innerHTML = `
-      <div class="store-cover" style="position:relative;">${p.image_url?`<img class="zoomable" src="${esc(p.image_url)}">`:""}<span class="offer-badge">خصم</span></div>
-      <div class="store-body">
-        <h4>${esc(p.name)}</h4>
-        <div class="store-meta"><span>${esc(store.name)}</span></div>
-        <p class="num" style="font-weight:800;">${sar(p.discount_price)} <span class="price-old num">${sar(p.price)}</span></p>
-        <button class="btn btn-gold btn-sm" data-open-store="${store.id}">اطلب الآن</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-  grid.querySelectorAll("[data-open-store]").forEach(b=> b.onclick = ()=> openStorePanel(b.dataset.openStore));
 }
 function renderCatChips(){
   const cats = ["الكل", ...Array.from(new Set(state.stores.map(s=>s.category)))];
@@ -966,13 +872,10 @@ function openStorePanel(storeId){
   activeProducts.forEach(p=>{
     const row = document.createElement("div");
     row.className = "product-row";
-    const priceHtml = (p.is_offer && p.discount_price!=null)
-      ? `<span class="price-old num">${sar(p.price)}</span> ${sar(p.discount_price)}`
-      : sar(p.price);
     row.innerHTML = `
       <div class="product-thumb">${p.image_url?`<img class="zoomable" src="${esc(p.image_url)}">`:"🛍️"}</div>
       <div class="product-info"><h5>${esc(p.name)}</h5><span>${esc(store.name)}</span></div>
-      <div class="price-tag num">${priceHtml}</div>
+      <div class="price-tag num">${sar(p.price)}</div>
       <button class="add-btn" title="أضف للسلة">+</button>`;
     row.querySelector(".add-btn").onclick = ()=> addToCart(p, store);
     box.appendChild(row);
@@ -987,8 +890,7 @@ panelBackdrop.addEventListener("click", closeStorePanel);
 const cartDrawer = document.getElementById("cartDrawer");
 const cartBackdrop = document.getElementById("cartBackdrop");
 function addToCart(product, store){
-  const effective = (product.is_offer && product.discount_price!=null) ? {...product, price: product.discount_price} : product;
-  if(!state.cart[product.id]) state.cart[product.id] = {product: effective, storeId:store.id, storeName:store.name, qty:0};
+  if(!state.cart[product.id]) state.cart[product.id] = {product, storeId:store.id, storeName:store.name, qty:0};
   state.cart[product.id].qty++;
   renderCart();
   toast(`أُضيف «${product.name}» إلى السلة`);
@@ -1163,10 +1065,9 @@ async function handleStoreLogoFile(file){
 document.getElementById("storeLogoInput").addEventListener("change", e=> handleStoreLogoFile(e.target.files[0]));
 document.getElementById("storeLogoCameraInput").addEventListener("change", e=> handleStoreLogoFile(e.target.files[0]));
 document.getElementById("saveStoreBtn").onclick = async ()=>{
-  const category = document.getElementById("sfCategory").value.trim() || "أخرى";
   const payload = {
     name: document.getElementById("sfName").value.trim() || state.myStore.name,
-    category,
+    category: document.getElementById("sfCategory").value.trim() || "أخرى",
     area: document.getElementById("sfArea").value.trim(),
     phone: document.getElementById("sfPhone").value.trim(),
     phone2: document.getElementById("sfPhone2").value.trim(),
@@ -1176,8 +1077,6 @@ document.getElementById("saveStoreBtn").onclick = async ()=>{
   if(state.storeLoc){ payload.lat = state.storeLoc.lat; payload.lng = state.storeLoc.lng; }
   const {error} = await sb.from("stores").update(payload).eq("id", state.myStore.id);
   if(error){ toast("تعذر حفظ البيانات"); return; }
-  await ensureCategoryExists(category);
-  populateCategoryDatalist();
   toast("تم حفظ بيانات المتجر");
   document.getElementById("merchStoreTitle").textContent = payload.name;
 };
@@ -1185,21 +1084,13 @@ document.getElementById("saveStoreBtn").onclick = async ()=>{
 function renderMerchantProducts(){
   const products = state.myStore.products || [];
   document.getElementById("mStatProducts").textContent = products.length.toLocaleString("ar-SA");
-  const limit = state.myStore.product_limit;
-  const banner = document.getElementById("productLimitBanner");
-  const reached = products.length >= limit;
-  banner.textContent = `المنتجات: ${products.length} من ${limit}` + (reached ? " — وصلت للحد المسموح" : "");
-  banner.style.background = reached ? "#FCEFD8" : "";
-  document.getElementById("addProductBtn").disabled = reached;
-  document.getElementById("addProductBtn").title = reached ? "تواصل مع إدارة المنصة لزيادة الحد" : "";
   const body = document.getElementById("merchantProductsBody");
-  body.innerHTML = products.length ? "" : '<tr class="empty-row"><td colspan="5">لا توجد منتجات — أضف أول منتج لمتجرك.</td></tr>';
+  body.innerHTML = products.length ? "" : '<tr class="empty-row"><td colspan="4">لا توجد منتجات — أضف أول منتج لمتجرك.</td></tr>';
   products.forEach(p=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `<td data-label="المنتج" style="display:flex;align-items:center;gap:8px;">
         <div class="product-thumb" style="width:34px;height:34px;">${p.image_url?`<img src="${esc(p.image_url)}">`:"🛍️"}</div>${esc(p.name)}</td>
       <td data-label="السعر"><input class="price-input num" type="number" value="${p.price}" data-price="${p.id}"></td>
-      <td data-label="عرض">${p.is_offer?`<span class="badge new num">${sar(p.discount_price)}</span>`:"—"}</td>
       <td data-label="الحالة"><span class="switch ${p.active?"on":""}" data-toggle="${p.id}"></span></td>
       <td data-label=""><button class="mini-btn ghost" data-edit="${p.id}">تعديل</button> <button class="mini-btn ghost" data-del="${p.id}">حذف</button></td>`;
     body.appendChild(tr);
@@ -1255,7 +1146,7 @@ function stageBadge(stage){
 }
 
 /* Product add/edit modal */
-document.getElementById("addProductBtn").onclick = ()=>{ if(!document.getElementById("addProductBtn").disabled) openProductModal(null); };
+document.getElementById("addProductBtn").onclick = ()=> openProductModal(null);
 function openProductModal(product){
   state.editingProductId = product ? product.id : null;
   document.getElementById("productModalTitle").textContent = product ? "تعديل منتج" : "إضافة منتج";
@@ -1264,17 +1155,9 @@ function openProductModal(product){
   document.getElementById("prPrice").value = product?.price || "";
   document.getElementById("prodImgPreview").src = product?.image_url || "";
   document.getElementById("prErr").textContent = "";
-  document.getElementById("prOfferSwitch").classList.toggle("on", !!product?.is_offer);
-  document.getElementById("prDiscountWrap").style.display = product?.is_offer ? "block" : "none";
-  document.getElementById("prDiscountPrice").value = product?.discount_price || "";
   state.prodImageFile = null;
   openModal("productBackdrop");
 }
-document.getElementById("prOfferSwitch").addEventListener("click", ()=>{
-  const sw = document.getElementById("prOfferSwitch");
-  sw.classList.toggle("on");
-  document.getElementById("prDiscountWrap").style.display = sw.classList.contains("on") ? "block" : "none";
-});
 document.getElementById("prCancel").onclick = ()=> closeModal("productBackdrop");
 function handleProdImgFile(file){
   if(!file) return;
@@ -1287,41 +1170,30 @@ document.getElementById("prSave").onclick = async ()=>{
   const name = document.getElementById("prName").value.trim();
   const description = document.getElementById("prDesc").value.trim();
   const price = parseFloat(document.getElementById("prPrice").value);
-  const is_offer = document.getElementById("prOfferSwitch").classList.contains("on");
-  const discount_price = is_offer ? parseFloat(document.getElementById("prDiscountPrice").value) : null;
   const errEl = document.getElementById("prErr");
   if(!name || isNaN(price) || price<0){ errEl.textContent = "أدخل اسم المنتج وسعرًا صحيحًا"; return; }
-  if(is_offer && (isNaN(discount_price) || discount_price<0 || discount_price>=price)){ errEl.textContent = "سعر العرض يجب أن يكون أقل من السعر الأصلي"; return; }
   try{
     let image_url;
     if(state.prodImageFile){ image_url = await uploadImage(state.prodImageFile, "product-images", state.myStore.id); }
     if(state.editingProductId){
-      const payload = {name, description, price, is_offer, discount_price};
+      const payload = {name, description, price};
       if(image_url) payload.image_url = image_url;
-      const {error} = await sb.from("products").update(payload).eq("id", state.editingProductId);
-      if(error) throw error;
+      await sb.from("products").update(payload).eq("id", state.editingProductId);
     } else {
-      const {error} = await sb.from("products").insert({store_id: state.myStore.id, name, description, price, image_url, is_offer, discount_price});
-      if(error) throw error;
+      await sb.from("products").insert({store_id: state.myStore.id, name, description, price, image_url});
     }
     closeModal("productBackdrop");
     await loadMerchant();
     toast("تم حفظ المنتج");
-  }catch(e){
-    const msg = (e.message||"").includes("PRODUCT_LIMIT_REACHED")
-      ? `وصلت للحد المسموح به من المنتجات (${state.myStore.product_limit}). تواصل مع إدارة المنصة لزيادة الحد.`
-      : "تعذر حفظ المنتج";
-    errEl.textContent = msg;
-  }
+  }catch(e){ errEl.textContent = "تعذر حفظ المنتج"; }
 };
 
 /* ============== COURIER DASHBOARD ============== */
 async function loadCourier(){
   const uid = state.session?.user?.id;
-  const {data: available} = await sb.from("orders").select("*, stores(name,lat,lng)").is("courier_id", null).order("created_at");
-  const {data: mine} = await sb.from("orders").select("*, stores(name,lat,lng)").eq("courier_id", uid).order("created_at", {ascending:false});
+  const {data: available} = await sb.from("orders").select("*").is("courier_id", null).order("created_at");
+  const {data: mine} = await sb.from("orders").select("*, stores(name)").eq("courier_id", uid).order("created_at", {ascending:false});
   const av = available||[]; const mn = mine||[];
-  lastAvailableCount = av.length;
   document.getElementById("dStatAvailable").textContent = av.length.toLocaleString("ar-SA");
   const active = mn.filter(o=>o.stage<4), done = mn.filter(o=>o.stage===4);
   document.getElementById("dStatActive").textContent = active.length.toLocaleString("ar-SA");
@@ -1333,20 +1205,13 @@ async function loadCourier(){
   av.forEach(o=>{
     const tr = document.createElement("tr");
     const locLink = o.lat ? `<a class="link-gmaps" target="_blank" href="https://www.google.com/maps?q=${o.lat},${o.lng}">خريطة ↗</a>` : "—";
-    const dist = haversineKm(o.stores?.lat, o.stores?.lng, o.lat, o.lng);
-    const distTxt = dist!==null ? `${locLink} — ~${dist.toFixed(1)} كم` : locLink;
-    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="العنوان">${esc(o.address)}</td><td data-label="الموقع">${distTxt}</td><td class="num" data-label="أجرة التوصيل">${sar(o.delivery_fee)}</td><td data-label=""><button class="mini-btn" data-accept="${o.id}">قبول الطلب</button></td>`;
+    tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="العنوان">${esc(o.address)}</td><td data-label="الموقع">${locLink}</td><td class="num" data-label="أجرة التوصيل">${sar(o.delivery_fee)}</td><td data-label=""><button class="mini-btn" data-accept="${o.id}">قبول الطلب</button></td>`;
     ab.appendChild(tr);
   });
   ab.querySelectorAll("[data-accept]").forEach(b=>{
     b.onclick = async ()=>{
       const {error} = await sb.from("orders").update({courier_id: uid, stage: 1}).eq("id", b.dataset.accept).is("courier_id", null);
-      if(error){
-        const msg = (error.message||"").includes("COURIER_LIMIT_REACHED")
-          ? "وصلت للحد المسموح به من الطلبات النشطة. أنهِ طلباتك الحالية أو تواصل مع الإدارة لزيادة الحد."
-          : "تم قبول الطلب من مندوب آخر";
-        toast(msg);
-      } else toast("تم قبول الطلب");
+      if(error){ toast("تم قبول الطلب من مندوب آخر"); } else toast("تم قبول الطلب");
       loadCourier();
     };
   });
@@ -1357,7 +1222,6 @@ async function loadCourier(){
     const tr = document.createElement("tr");
     let action = "—";
     if(o.stage>=1 && o.stage<4) action = `<button class="mini-btn ghost" data-advance="${o.id}">${STAGES[o.stage+1]} ←</button>`;
-    action += ` <button class="mini-btn ghost" data-pdf="${o.id}">PDF 🧾</button>`;
     tr.innerHTML = `<td class="num" data-label="رقم الطلب">${o.order_code}</td><td data-label="الحالة">${stageBadge(o.stage)}</td><td data-label="">${action}</td>`;
     mb.appendChild(tr);
   });
@@ -1370,27 +1234,16 @@ async function loadCourier(){
       loadCourier();
     };
   });
-  mb.querySelectorAll("[data-pdf]").forEach(b=> b.onclick = ()=> downloadOrderPdf(b.dataset.pdf));
 }
 
 /* ============== ADMIN DASHBOARD ============== */
 document.getElementById("adminTabs").querySelectorAll("button").forEach(b=>{
   b.addEventListener("click", ()=>{
     document.getElementById("adminTabs").querySelectorAll("button").forEach(x=>x.classList.toggle("active", x===b));
-    ["users","stores","orders","reports","chats","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
+    ["users","stores","orders","reports","settings"].forEach(t=> document.getElementById("adminTab-"+t).style.display = (t===b.dataset.tab?"block":"none"));
     if(b.dataset.tab==="reports") populateReportEntities();
-    if(b.dataset.tab==="chats") loadAdminChats();
   });
 });
-document.getElementById("purgeOrdersBtn").onclick = async ()=>{
-  const dateVal = document.getElementById("purgeBeforeDate").value;
-  if(!dateVal){ toast("اختر تاريخًا أولًا"); return; }
-  if(!confirm("سيتم حذف كل الطلبات الأقدم من هذا التاريخ نهائيًا. متابعة؟")) return;
-  const {error} = await sb.from("orders").delete().lt("created_at", new Date(dateVal+"T00:00:00").toISOString());
-  if(error){ toast("تعذر حذف الطلبات"); return; }
-  toast("تم حذف الطلبات القديمة");
-  loadAdmin();
-};
 
 /* ---- Reports ---- */
 async function populateReportEntities(){
@@ -1476,20 +1329,9 @@ async function loadAdmin(){
     const tr = document.createElement("tr");
     const roleAr = {admin:"إدارة", merchant:"تاجر", courier:"مندوب"}[p.role]||p.role;
     const isSelf = state.session && p.id === state.session.user.id;
-    const limitCell = p.role==="courier"
-      ? `<input class="price-input num" type="number" min="0" value="${p.order_limit}" data-orderlimit="${p.id}" style="width:60px;">`
-      : "—";
     tr.innerHTML = `<td data-label="الاسم">${esc(p.full_name)}</td><td class="num" data-label="اسم المستخدم">${esc(p.username)}</td><td data-label="الدور"><span class="badge progress">${roleAr}</span></td><td class="num" data-label="الهاتف">${esc(p.phone||"—")}</td>
-      <td data-label="الحد">${limitCell}</td>
       <td data-label="">${isSelf?"":`<button class="mini-btn ghost" data-deluser="${p.id}">حذف</button>`}</td>`;
     ub.appendChild(tr);
-  });
-  ub.querySelectorAll("[data-orderlimit]").forEach(inp=>{
-    inp.addEventListener("change", async ()=>{
-      const v = parseInt(inp.value)||0;
-      await sb.from("profiles").update({order_limit:v}).eq("id", inp.dataset.orderlimit);
-      toast("تم تحديث حد الطلبات للمندوب");
-    });
   });
   ub.querySelectorAll("[data-deluser]").forEach(b=>{
     b.onclick = async ()=>{
@@ -1503,31 +1345,13 @@ async function loadAdmin(){
   });
 
   const sb2 = document.getElementById("adminStoresBody");
-  sb2.innerHTML = strs.length ? "" : '<tr class="empty-row"><td colspan="6">لا توجد متاجر بعد.</td></tr>';
+  sb2.innerHTML = strs.length ? "" : '<tr class="empty-row"><td colspan="5">لا توجد متاجر بعد.</td></tr>';
   strs.forEach(s=>{
     const sOrders = ord.filter(o=>o.store_id===s.id);
     const sales = sOrders.reduce((a,o)=>a+Number(o.subtotal),0);
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="المتجر">${esc(s.name)}</td><td data-label="التاجر">${esc(s.profiles?.full_name||"—")}</td><td class="num" data-label="المبيعات">${sar(sales)}</td><td class="num" data-label="العمولة">${sar(Math.round(sales*0.01))}</td>
-      <td data-label="حد المنتجات"><input class="price-input num" type="number" min="0" value="${s.product_limit}" data-limit="${s.id}" style="width:60px;"></td>
-      <td data-label="النشر"><span class="switch ${s.active?"on":""}" data-storetoggle="${s.id}" title="${s.active?"مسموح بالنشر":"موقوف عن النشر"}"></span></td>`;
+    tr.innerHTML = `<td data-label="المتجر">${esc(s.name)}</td><td data-label="التاجر">${esc(s.profiles?.full_name||"—")}</td><td class="num" data-label="المبيعات">${sar(sales)}</td><td class="num" data-label="العمولة">${sar(Math.round(sales*0.01))}</td><td data-label="الحالة"><span class="badge ${s.active?"done":"new"}">${s.active?"نشط":"موقوف"}</span></td>`;
     sb2.appendChild(tr);
-  });
-  sb2.querySelectorAll("[data-limit]").forEach(inp=>{
-    inp.addEventListener("change", async ()=>{
-      const v = parseInt(inp.value)||0;
-      await sb.from("stores").update({product_limit:v}).eq("id", inp.dataset.limit);
-      toast("تم تحديث حد المنتجات");
-    });
-  });
-  sb2.querySelectorAll("[data-storetoggle]").forEach(sw=>{
-    sw.addEventListener("click", async ()=>{
-      const s = strs.find(x=>x.id===sw.dataset.storetoggle);
-      const newVal = !s.active;
-      await sb.from("stores").update({active:newVal}).eq("id", s.id);
-      s.active = newVal; sw.classList.toggle("on", newVal);
-      toast(newVal ? "تم السماح للمتجر بالنشر" : "تم إيقاف نشر المتجر");
-    });
   });
 
   const ob = document.getElementById("adminOrdersBody");
@@ -1593,148 +1417,12 @@ function applyBrand(logoUrl, name){
   if(logoUrl && !logoUrl.endsWith("/") ){ mark.innerHTML = `<img src="${logoUrl}">`; }
 }
 
-/* ============== CHAT ============== */
-let chatChannel = null;
-let chatState = {participantId:null, participantName:""};
-function roleArabic(r){ return {admin:"إدارة", merchant:"تاجر", courier:"مندوب", customer:"عميل"}[r]||r; }
-
-async function openChat(participantId, title, showDelete){
-  chatState.participantId = participantId;
-  document.getElementById("chatTitle").textContent = title;
-  document.getElementById("chatDeleteBtn").style.display = showDelete ? "inline-flex" : "none";
-  openModal("chatBackdrop");
-  await loadChatMessages();
-  if(chatChannel) sb.removeChannel(chatChannel);
-  chatChannel = sb.channel("messages-"+participantId)
-    .on("postgres_changes", {event:"*", schema:"public", table:"messages", filter:`participant_id=eq.${participantId}`}, ()=> loadChatMessages())
-    .subscribe();
-}
-async function loadChatMessages(){
-  const {data} = await sb.from("messages").select("*").eq("participant_id", chatState.participantId).order("created_at");
-  const box = document.getElementById("chatMessages");
-  const myId = state.session?.user?.id;
-  box.innerHTML = "";
-  (data||[]).forEach(m=>{
-    const mine = m.sender_id === myId;
-    const div = document.createElement("div");
-    div.className = "chat-bubble " + (mine?"mine":"theirs");
-    div.innerHTML = `${esc(m.body)}<div class="chat-time">${new Date(m.created_at).toLocaleString("ar-SA",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"})}</div>`;
-    box.appendChild(div);
-  });
-  box.scrollTop = box.scrollHeight;
-}
-document.getElementById("chatClose").onclick = ()=>{ closeModal("chatBackdrop"); if(chatChannel){ sb.removeChannel(chatChannel); chatChannel=null; } };
-document.getElementById("chatSend").onclick = sendChatMessage;
-document.getElementById("chatInput").addEventListener("keydown", e=>{ if(e.key==="Enter") sendChatMessage(); });
-async function sendChatMessage(){
-  const input = document.getElementById("chatInput");
-  const body = input.value.trim();
-  if(!body || !chatState.participantId) return;
-  const myId = state.session?.user?.id;
-  const {error} = await sb.from("messages").insert({participant_id: chatState.participantId, sender_id: myId, body});
-  if(error){ toast("تعذر إرسال الرسالة"); return; }
-  input.value = "";
-  await loadChatMessages();
-}
-document.getElementById("chatDeleteBtn").onclick = async ()=>{
-  if(!confirm("حذف كل رسائل هذه المحادثة نهائيًا؟")) return;
-  await sb.from("messages").delete().eq("participant_id", chatState.participantId);
-  await loadChatMessages();
-  toast("تم حذف المحادثة");
-};
-
-async function loadAdminChats(){
-  const {data: people} = await sb.from("profiles").select("*").in("role", ["merchant","courier"]).order("full_name");
-  const body = document.getElementById("adminChatsBody");
-  body.innerHTML = (people&&people.length) ? "" : '<tr class="empty-row"><td colspan="4">لا يوجد تجار أو مندوبون بعد.</td></tr>';
-  for(const person of (people||[])){
-    const {data: lastMsgs} = await sb.from("messages").select("body,created_at").eq("participant_id", person.id).order("created_at",{ascending:false}).limit(1);
-    const last = lastMsgs && lastMsgs[0];
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td data-label="الاسم">${esc(person.full_name)}</td><td data-label="الدور"><span class="badge progress">${roleArabic(person.role)}</span></td>
-      <td data-label="آخر رسالة">${last?esc(last.body).slice(0,40):"—"}</td><td data-label=""><button class="mini-btn" data-openchat="${person.id}" data-name="${esc(person.full_name)}">فتح المحادثة</button></td>`;
-    body.appendChild(tr);
-  }
-  body.querySelectorAll("[data-openchat]").forEach(b=>{
-    b.onclick = ()=> openChat(b.dataset.openchat, "محادثة مع " + b.dataset.name, true);
-  });
-}
-
-/* ============== CATEGORIES ============== */
-async function populateCategoryDatalist(){
-  const {data} = await sb.from("categories").select("name").order("name");
-  const list = document.getElementById("categoryList");
-  if(list) list.innerHTML = (data||[]).map(c=>`<option value="${esc(c.name)}">`).join("");
-}
-async function ensureCategoryExists(name){
-  if(!name) return;
-  await sb.from("categories").insert({name}).select().maybeSingle().then(()=>{}).catch(()=>{});
-}
-
-/* ============== DISTANCE + PDF (courier) ============== */
-function haversineKm(lat1,lng1,lat2,lng2){
-  if([lat1,lng1,lat2,lng2].some(v=>v===null||v===undefined)) return null;
-  const R=6371, toRad = d=>d*Math.PI/180;
-  const dLat = toRad(lat2-lat1), dLng = toRad(lng2-lng1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-async function downloadOrderPdf(orderId){
-  const {data:o} = await sb.from("orders").select("*, stores(name,phone,address,lat,lng), order_items(*)").eq("id", orderId).single();
-  if(!o){ toast("تعذر تحميل بيانات الطلب"); return; }
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(16); doc.text(`Order ${o.order_code}`, 14, 18);
-  doc.setFontSize(11);
-  let y = 30;
-  const line = (t)=>{ doc.text(t, 14, y); y += 8; };
-  line(`Store: ${o.stores?.name||"-"}  Tel: ${o.stores?.phone||"-"}`);
-  line(`Customer: ${o.guest_name||"-"}  Tel: ${o.guest_phone||"-"}`);
-  line(`Address: ${(o.address||"-").slice(0,70)}`);
-  if(o.lat) line(`Location: https://www.google.com/maps?q=${o.lat},${o.lng}`);
-  line(`Note: ${o.note||"-"}`);
-  y += 2; doc.setFontSize(12); line("Items:"); doc.setFontSize(11);
-  (o.order_items||[]).forEach(it=> line(`- ${it.name} x${it.qty}  =  ${it.price*it.qty} SAR`));
-  y += 2; line(`Subtotal: ${o.subtotal} SAR`); line(`Delivery: ${o.delivery_fee} SAR`); line(`Total: ${o.total} SAR`);
-  doc.save(`${o.order_code}.pdf`);
-}
-
-/* ============== NEW ORDER SOUND NOTIFICATION (courier) ============== */
-let lastAvailableCount = null;
-function playNotifySound(){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    [0,0.15].forEach((delay,i)=>{
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.type = "sine"; osc.frequency.value = i===0?880:1180;
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime+delay);
-      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime+delay+0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+delay+0.28);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime+delay); osc.stop(ctx.currentTime+delay+0.3);
-    });
-  }catch(e){}
-}
-let courierPollTimer = null;
-function startCourierPolling(){
-  if(courierPollTimer) return;
-  courierPollTimer = setInterval(async ()=>{
-    if(!state.profile || state.profile.role!=="courier") return;
-    const {count} = await sb.from("orders").select("id",{count:"exact",head:true}).is("courier_id", null);
-    if(lastAvailableCount!==null && count > lastAvailableCount){ playNotifySound(); toast("🔔 طلب جديد متاح"); }
-    lastAvailableCount = count;
-    if(document.getElementById("view-courier").classList.contains("active")) loadCourier();
-  }, 20000);
-}
-
 /* ============== BOOT ============== */
 async function boot(){
   await checkBootstrap();
   await refreshAuth();
   const {data: settings} = await sb.from("site_settings").select("*").eq("id",1).maybeSingle();
   if(settings) applyBrand(settings.logo_url, settings.site_name);
-  populateCategoryDatalist();
-  startCourierPolling();
 
   if(!state.hasAnyAdmin){
     switchView("bootstrap");
